@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+header {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+h1 {
+    color: #ff4757;
+    font-size: 2.8rem;
+    margin-bottom: 5px;
+}
+
+p {
+    color: #a4b0be;
+}
+
+/* Grille de jeux dynamique */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 30px;
+}
+
+.game-card {
+    background-color: #1e272e;
+    border: 2px solid #2f3542;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.game-card:hover {
+    border-color: #ff4757;
+    transform: translateY(-4px);
+    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+}
+
+.game-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.game-badge {
+    background-color: #ff4757;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Zone d'émulation */
+#game-wrapper {
+    width: 100%;
+    max-width: 900px;
+    height: 550px;
+    background-color: #000000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#game {
+    width: 100%;
+    height: 100%;
+}
+
+.placeholder-text {
+    color: #57606f;
+    font-size: 1.2rem;
+}
