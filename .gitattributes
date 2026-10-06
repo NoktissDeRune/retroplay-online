@@ -1,0 +1,8 @@
+# Activer Git LFS pour les gros fichiers de jeux
+*.z64 filter=lfs diff=lfs merge=lfs -text
+*.n64 filter=lfs diff=lfs merge=lfs -text
+*.v64 filter=lfs diff=lfs merge=lfs -text
+*.iso filter=lfs diff=lfs merge=lfs -text
+*.chd filter=lfs diff=lfs merge=lfs -text
+*.cue filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
