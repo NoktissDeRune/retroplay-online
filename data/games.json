@@ -6,9 +6,9 @@
         "path": "roms/gba/PokemonVersionRougeFeuFr.gba"
     },
     {
-        "id": "zelda-oot-eu",
-        "title": "The Legend of Zelda: Ocarina of Time (FR/EU)",
-        "console": "n64",
-        "path": "/archive-roms/n64-romset-europe/Legend%20of%20Zelda%2C%20The%20-%20Ocarina%20of%20Time%20%28Europe%29%20%28En%2CFr%2CDe%29.z64"
+      "id": "zelda-oot-eu",
+      "title": "The Legend of Zelda: Ocarina of Time (FR/EU)",
+      "console": "n64",
+      "path": "https://ia600507.us.archive.org/29/items/retrocollection-1g1r-nintendo-n64-other/Other%20Regions/Legend%20of%20Zelda%2C%20The%20-%20Ocarina%20of%20Time%20%28Europe%29%20%28En%2CFr%2CDe%29%20%28Rev%20A%29.z64"
     }
 ]
