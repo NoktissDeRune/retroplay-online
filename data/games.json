@@ -7,8 +7,14 @@
     },
     {
         "id": "zelda-oot-eu",
-        "title": "The Legend of Zelda: Ocarina of Time (FR/EU)",
-        "console": "n64",
-        "path": "https://api.allorigins.win/raw?url=https://github.com/NoktissDeRune/retroplay-roms/releases/download/v1.0/Legend.of.Zelda.The.-.Ocarina.of.Time.Europe.En.Fr.De.Rev.1.z64"
+        "title": "The Legend of Zelda: A Link to the Past",
+        "console": "gba",
+        "path": "roms/gba/TheLegendofZeldaALinktothePastFr.gba"
+    }, 
+    {
+        "id": "pkmn-a",
+        "title": "Pokemon Argent",
+        "console": "gbc",
+        "path": "roms/gbc/PokemonVersionArgentFr.gbc"
     }
 ]
