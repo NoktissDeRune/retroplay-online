@@ -35,9 +35,15 @@ function lancerJeu(consoleCode, cheminRom) {
     const wrapper = document.getElementById('game-wrapper');
     wrapper.innerHTML = '<div id="game"></div>';
 
+    // Gestion du proxy CORS pour les ROMs hébergées sur un serveur externe (ex: Archive.org)
+    let romUrl = cheminRom;
+    if (romUrl.startsWith('http')) {
+        romUrl = 'https://corsproxy.io/?' + encodeURIComponent(cheminRom);
+    }
+
     EJS_player = '#game';
     EJS_core = consoleCode;
-    EJS_gameUrl = cheminRom;
+    EJS_gameUrl = romUrl;
     EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
 
     let loaderScript = document.createElement('script');
