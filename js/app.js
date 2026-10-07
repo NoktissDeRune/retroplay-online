@@ -32,13 +32,23 @@ async function chargerCatalogue() {
 
 function lancerJeu(consoleCode, cheminRom) {
     const wrapper = document.getElementById('game-wrapper');
-    wrapper.innerHTML = '<div id="game"></div>';
+    
+    // 1. On vide complètement le conteneur pour détruire l'ancienne instance
+    wrapper.innerHTML = ''; 
 
-    EJS_player = '#game';
-    EJS_core = consoleCode;
-    EJS_gameUrl = cheminRom; // On passe directement le chemin
-    EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    // 2. On recrée l'élément #game
+    const gameDiv = document.createElement('div');
+    gameDiv.id = 'game';
+    wrapper.appendChild(gameDiv);
 
+    // 3. Configuration d'EmulatorJS
+    window.EJS_player = '#game';
+    window.EJS_core = consoleCode;
+    window.EJS_gameUrl = cheminRom;
+    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_language = 'en-US'; // Évite la requête 404 fr.json inutile
+
+    // 4. Nettoyage et réinjection propre du script
     const oldScript = document.getElementById('emu-script');
     if (oldScript) oldScript.remove();
 
