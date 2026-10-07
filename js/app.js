@@ -34,21 +34,11 @@ function lancerJeu(consoleCode, cheminRom) {
     const wrapper = document.getElementById('game-wrapper');
     wrapper.innerHTML = '<div id="game"></div>';
 
-    let romUrl = cheminRom;
-
-    if (romUrl.startsWith('http')) {
-        // Contournement natif pour Archive.org via corsproxy.io
-        romUrl = 'https://corsproxy.io/?' + cheminRom;
-    }
-
-    // Paramètres requis par EmulatorJS
     EJS_player = '#game';
     EJS_core = consoleCode;
-    EJS_gameUrl = romUrl;
+    EJS_gameUrl = cheminRom; // On passe directement le chemin
     EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-    EJS_startOnLoaded = true;
 
-    // Suppression de l'ancien script pour éviter les conflits d'injection
     const oldScript = document.getElementById('emu-script');
     if (oldScript) oldScript.remove();
 
