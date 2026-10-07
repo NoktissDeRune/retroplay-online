@@ -45,6 +45,7 @@ function lancerJeu(consoleCode, cheminRom) {
     window.EJS_player = '#game';
     window.EJS_core = consoleCode;
     window.EJS_gameUrl = cheminRom;
+    window.EJS_coreUrl = 'https://cdn.emulatorjs.org/stable/data/cores/';
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
     window.EJS_language = 'en-US'; // Évite la requête 404 fr.json inutile
 
