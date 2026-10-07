@@ -35,18 +35,31 @@ function lancerJeu(consoleCode, cheminRom) {
     const wrapper = document.getElementById('game-wrapper');
     wrapper.innerHTML = '<div id="game"></div>';
 
-    // Gestion du proxy CORS pour les ROMs hébergées sur un serveur externe (ex: Archive.org)
     let romUrl = cheminRom;
+
     if (romUrl.startsWith('http')) {
-        romUrl = 'https://corsproxy.io/?' + encodeURIComponent(cheminRom);
+        // Encodage propre de l'URL source
+        const encodedUrl = encodeURIComponent(cheminRom);
+        
+        // Proxy ultra-stable pour les gros fichiers binaires (Archive.org)
+        romUrl = `https://corsproxy.io/?url=${encodedUrl}`;
     }
+
+    // Extraction du nom de fichier original (ex: "zelda.z64") pour qu'EmuJS reconnaisse l'extension
+    const fileName = cheminRom.split('/').pop().split('?')[0];
 
     EJS_player = '#game';
     EJS_core = consoleCode;
     EJS_gameUrl = romUrl;
+    EJS_gameName = fileName; // Indique explicitement le nom du fichier à l'émulateur
     EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
 
+    // Nettoyage des anciens scripts loader s'il y en a
+    const oldScript = document.getElementById('emu-loader');
+    if (oldScript) oldScript.remove();
+
     let loaderScript = document.createElement('script');
+    loaderScript.id = 'emu-loader';
     loaderScript.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
     document.body.appendChild(loaderScript);
 }
