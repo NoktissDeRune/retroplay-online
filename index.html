@@ -16,6 +16,20 @@
   </header>
 
   <main>
+    <!-- Bannière Jeu à la une (Hero Section) -->
+    <section id="hero-section" class="hero-container">
+      <!-- Injecté par JS -->
+    </section>
+
+    <!-- Section Reprendre / Favoris (affichée si des jeux existent) -->
+    <section id="personal-section" class="personal-section" style="display: none;">
+      <h2 class="section-title">⭐ Mes Favoris & Récents</h2>
+      <div id="personal-grid" class="games-grid">
+        <!-- Injecté par JS -->
+      </div>
+    </section>
+
+    <!-- Filtres et Recherche -->
     <section class="controls-bar">
       <input type="text" id="search-input" class="search-input" placeholder="Rechercher un jeu (ex: Pokémon, Zelda)...">
       <div id="filters-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
@@ -26,8 +40,14 @@
       </div>
     </section>
 
+    <!-- Titre Catalogue -->
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem 1rem;">
+      <h2 class="section-title">Tout le catalogue</h2>
+    </div>
+
+    <!-- Grille Principale -->
     <section id="games-grid" class="games-grid">
-      <!-- Les cartes de jeux seront injectées ici par js/app.js -->
+      <!-- Injecté par JS -->
     </section>
   </main>
 
