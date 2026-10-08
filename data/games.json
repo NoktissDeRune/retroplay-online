@@ -1,20 +1,26 @@
 [
-    {
-        "id": "pkmn-rf",
-        "title": "Pokémon Rouge Feu",
-        "console": "gba",
-        "path": "roms/gba/PokemonVersionRougeFeuFr.gba"
-    },
-    {
-        "id": "zelda-oot-eu",
-        "title": "The Legend of Zelda: A Link to the Past",
-        "console": "gba",
-        "path": "roms/gba/TheLegendofZeldaALinktothePastFr.gba"
-    }, 
-    {
-        "id": "pkmn-a",
-        "title": "Pokemon Argent",
-        "console": "gb",
-        "path": "roms/gbc/PokemonVersionArgentFr.gbc"
-    }
+  {
+    "id": "pkmn-rf",
+    "title": "Pokémon Version Rouge Feu",
+    "console": "gba",
+    "cover": "https://m.media-amazon.com/images/I/61N3K4v5AEL._AC_UF1000,1000_QL80_.jpg",
+    "path": "roms/gba/PokemonVersionRougeFeuFr.gba",
+    "description": "Explorez la région de Kanto, capturez les 151 Pokémon originaux et affrontez le Conseil 4."
+  },
+  {
+    "id": "zelda-alttp-eu",
+    "title": "The Legend of Zelda: A Link to the Past",
+    "console": "gb",
+    "cover": "https://media-amazon.com",  
+    "path": "roms/gba/TheLegendofZeldaALinktothePastFr.gba",
+    "description": "Voyagez entre le monde de la lumière et celui des ténèbres pour vaincre Ganon et sauver Hyrule."
+  },
+  {
+    "id": "pkmn-gold",
+    "title": "Pokémon Version Or",
+    "console": "gb",
+    "cover": "https://m.media-amazon.com/images/I/51B4P0P2FAL._AC_UF1000,1000_QL80_.jpg",
+    "path": "roms/gbc/PokemonVersionOr.gbc",
+    "description": "Parcourez Johto et Kanto à la recherche des Pokémon légendaires Ho-Oh et Lugia."
+  }
 ]
