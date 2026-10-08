@@ -14,7 +14,7 @@
     {
         "id": "pkmn-a",
         "title": "Pokemon Argent",
-        "console": "gbc",
+        "console": "gb",
         "path": "roms/gbc/PokemonVersionArgentFr.gbc"
     }
 ]
