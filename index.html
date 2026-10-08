@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayRetro — Catalogue Dynamique</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetroPlay — Vos jeux rétro en ligne</title>
+  <meta name="description" content="Jouez à vos jeux rétro préférés directement dans votre navigateur. GBA, N64, GBC et plus encore !">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <header>
-        <h1>RetroPlay</h1>
-        <p>Sélectionne un jeu pour lancer l'émulateur</p>
-    </header>
+  <header>
+    <a href="index.html" class="logo">
+      🎮 Retro<span>Play</span>
+    </a>
+  </header>
 
-    <!-- La grille de jeux générée automatiquement -->
-    <div id="games-grid" class="games-grid">
-        <p class="placeholder-text">Chargement des jeux...</p>
-    </div>
+  <main>
+    <section class="controls-bar">
+      <input type="text" id="search-input" class="search-input" placeholder="Rechercher un jeu (ex: Pokémon, Zelda)...">
+      <div id="filters-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="filter-btn active" data-console="all">Tous</button>
+        <button class="filter-btn" data-console="gba">GBA</button>
+        <button class="filter-btn" data-console="gb">GBC / GB</button>
+        <button class="filter-btn" data-console="n64">N64</button>
+      </div>
+    </section>
 
-    <!-- Zone de l'émulateur -->
-    <div id="game-wrapper">
-        <div id="game">
-            <span class="placeholder-text">Clique sur un jeu pour commencer</span>
-        </div>
-    </div>
+    <section id="games-grid" class="games-grid">
+      <!-- Les cartes de jeux seront injectées ici par js/app.js -->
+    </section>
+  </main>
 
-    <!-- Script de l'application -->
-    <script src="js/app.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
