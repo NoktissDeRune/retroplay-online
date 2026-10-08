@@ -1,60 +1,82 @@
 document.addEventListener('DOMContentLoaded', () => {
-    chargerCatalogue();
+  initCatalogue();
 });
 
-// Fonction qui lit le catalogue JSON et génère l'affichage
-async function chargerCatalogue() {
-    const grid = document.getElementById('games-grid');
-    
-    try {
-        const response = await fetch('data/games.json');
-        const jeux = await response.json();
+let tousLesJeux = [];
+let consoleFiltre = 'all';
 
-        grid.innerHTML = ''; // Vide la grille de chargement
+async function initCatalogue() {
+  const grid = document.getElementById('games-grid');
+  const searchInput = document.getElementById('search-input');
+  const filterBtns = document.querySelectorAll('.filter-btn');
 
-        jeux.forEach(jeu => {
-            const card = document.createElement('div');
-            card.className = 'game-card';
-            card.onclick = () => lancerJeu(jeu.console, jeu.path);
+  try {
+    const response = await fetch('data/games.json');
+    tousLesJeux = await response.json();
 
-            card.innerHTML = `
-                <div class="game-title">${jeu.title}</div>
-                <span class="game-badge">${jeu.console.toUpperCase()}</span>
-            `;
+    afficherJeux(tousLesJeux);
 
-            grid.appendChild(card);
-        });
-    } catch (erreur) {
-        console.error('Erreur lors du chargement du catalogue:', erreur);
-        grid.innerHTML = '<p>Impossible de charger la liste des jeux.</p>';
-    }
+    // Écouteur pour la recherche
+    searchInput.addEventListener('input', (e) => {
+      filtrerJeux(e.target.value, consoleFiltre);
+    });
+
+    // Écouteurs pour les boutons de filtre console
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        consoleFiltre = btn.dataset.console;
+        filtrerJeux(searchInput.value, consoleFiltre);
+      });
+    });
+
+  } catch (erreur) {
+    console.error('Erreur lors du chargement du catalogue:', erreur);
+    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue de jeux.</p>';
+  }
 }
 
-function lancerJeu(consoleCode, cheminRom) {
-    const wrapper = document.getElementById('game-wrapper');
-    
-    // 1. On vide complètement le conteneur pour détruire l'ancienne instance
-    wrapper.innerHTML = ''; 
+function afficherJeux(jeux) {
+  const grid = document.getElementById('games-grid');
+  grid.innerHTML = '';
 
-    // 2. On recrée l'élément #game
-    const gameDiv = document.createElement('div');
-    gameDiv.id = 'game';
-    wrapper.appendChild(gameDiv);
+  if (jeux.length === 0) {
+    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--text-muted);">Aucun jeu ne correspond à votre recherche.</p>';
+    return;
+  }
 
-    // 3. Configuration d'EmulatorJS
-    window.EJS_player = '#game';
-    window.EJS_core = consoleCode;
-    window.EJS_gameUrl = cheminRom;
-    window.EJS_coreUrl = 'https://cdn.emulatorjs.org/stable/data/cores/';
-    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-    window.EJS_language = 'en-US'; // Évite la requête 404 fr.json inutile
+  jeux.forEach(jeu => {
+    const card = document.createElement('a');
+    card.className = 'game-card';
+    card.href = `play.html?game=${jeu.id}`;
 
-    // 4. Nettoyage et réinjection propre du script
-    const oldScript = document.getElementById('emu-script');
-    if (oldScript) oldScript.remove();
+    const coverUrl = jeu.cover || 'https://via.placeholder.com/300x400?text=Pas+de+visuel';
+    const desc = jeu.description || 'Cliquez pour jouer à ce classique rétro !';
 
-    let loaderScript = document.createElement('script');
-    loaderScript.id = 'emu-script';
-    loaderScript.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-    document.body.appendChild(loaderScript);
+    card.innerHTML = `
+      <div class="cover-wrapper">
+        <img class="cover-img" src="${coverUrl}" alt="${jeu.title}" loading="lazy">
+        <span class="badge">${jeu.console.toUpperCase()}</span>
+      </div>
+      <div class="game-info">
+        <div class="game-title">${jeu.title}</div>
+        <div class="game-desc">${desc}</div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+function filtrerJeux(recherche, consoleCode) {
+  const terme = recherche.toLowerCase().trim();
+
+  const resultats = tousLesJeux.filter(jeu => {
+    const matchTitre = jeu.title.toLowerCase().includes(terme);
+    const matchConsole = (consoleCode === 'all') || (jeu.console.toLowerCase() === consoleCode.toLowerCase());
+    return matchTitre && matchConsole;
+  });
+
+  afficherJeux(resultats);
 }
