@@ -13,6 +13,9 @@ async function chargerEtLancerJeu() {
     return;
   }
 
+  // 2. Enregistrer le jeu dans l'historique récent (une fois gameId défini)
+  localStorage.setItem('retroplay_last_game', gameId);
+
   try {
     const response = await fetch('data/games.json');
     const jeux = await response.json();
@@ -24,7 +27,7 @@ async function chargerEtLancerJeu() {
       return;
     }
 
-    // 2. Mise à jour de l'interface et des balises SEO
+    // 3. Mise à jour de l'interface et des balises SEO
     document.title = `${jeu.title} — RetroPlay`;
     document.getElementById('game-title-display').childNodes[0].textContent = jeu.title + ' ';
     
@@ -33,26 +36,26 @@ async function chargerEtLancerJeu() {
     
     document.getElementById('game-desc-display').textContent = jeu.description || 'Profitez de votre partie !';
 
-    // 3. Préparation du chemin de la ROM (proxy allorigins si URL externe)
+    // 4. Préparation du chemin de la ROM (proxy allorigins si URL externe)
     let romUrl = jeu.path;
     if (romUrl.startsWith('http')) {
       romUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(romUrl)}`;
     }
 
-    // 4. Mappage des consoles vers les bons cores EmulatorJS
+    // 5. Mappage des consoles vers les bons cores EmulatorJS
     let coreName = jeu.console.toLowerCase();
     if (coreName === 'gbc' || coreName === 'gb') {
       coreName = 'gb'; // 'gb' gère à la fois Game Boy et Game Boy Color
     }
 
-    // 5. Configuration d'EmulatorJS
+    // 6. Configuration d'EmulatorJS
     window.EJS_player = '#game';
     window.EJS_core = coreName;
     window.EJS_gameUrl = romUrl;
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
     window.EJS_language = 'en-US';
 
-    // 6. Injection du loader EmulatorJS
+    // 7. Injection du loader EmulatorJS
     const loaderScript = document.createElement('script');
     loaderScript.id = 'emu-script';
     loaderScript.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
