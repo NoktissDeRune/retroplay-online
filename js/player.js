@@ -14,7 +14,6 @@ async function chargerEtLancerJeu() {
     return;
   }
 
-  // Historique récent
   localStorage.setItem('retroplay_last_game', currentGameId);
 
   try {
@@ -28,17 +27,14 @@ async function chargerEtLancerJeu() {
       return;
     }
 
-    // Mise à jour de l'interface
+    // Titre et informations de la page
     document.title = `${jeu.title} — RetroPlay`;
     document.getElementById('game-title-display').childNodes[0].textContent = jeu.title + ' ';
     document.getElementById('game-badge-display').textContent = jeu.console.toUpperCase();
     document.getElementById('game-desc-display').textContent = jeu.description || 'Profitez de votre partie !';
 
-    // Initialisation du bouton favori
+    // Gestion du bouton favori
     setupFavoriButton(currentGameId);
-
-    // Initialisation des boutons de sauvegarde
-    setupSaveHandlers();
 
     // Configuration de la ROM
     let romUrl = jeu.path;
@@ -68,7 +64,6 @@ async function chargerEtLancerJeu() {
   }
 }
 
-// --- Gestion des Favoris sur play.html ---
 function setupFavoriButton(gameId) {
   const btnFav = document.getElementById('btn-fav');
   let favoris = JSON.parse(localStorage.getItem('retroplay_favs') || '[]');
@@ -91,40 +86,5 @@ function setupFavoriButton(gameId) {
 
     localStorage.setItem('retroplay_favs', JSON.stringify(favoris));
     updateBtn(favoris.includes(gameId));
-  });
-}
-
-// --- Gestion de l'Export / Import de Sauvegarde ---
-function setupSaveHandlers() {
-  const btnExport = document.getElementById('btn-export-save');
-  const btnImport = document.getElementById('btn-import-save');
-  const inputImport = document.getElementById('input-import-save');
-
-  // Exportation
-  btnExport.addEventListener('click', () => {
-    if (window.EJS_emulator && typeof window.EJS_emulator.saveSaveFiles === 'function') {
-      window.EJS_emulator.saveSaveFiles();
-    } else {
-      alert('Veuillez lancer la partie et faire au moins une sauvegarde dans le jeu d\'abord.');
-    }
-  });
-
-  // Importation
-  btnImport.addEventListener('click', () => inputImport.click());
-
-  inputImport.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (window.EJS_emulator && typeof window.EJS_emulator.loadSaveFiles === 'function') {
-        window.EJS_emulator.loadSaveFiles(new Uint8Array(event.target.result));
-        alert('Sauvegarde chargée avec succès ! Redémarrez le jeu si nécessaire.');
-      } else {
-        alert('L\'émulateur n\'est pas encore complètement prêt. Réessayez dans quelques secondes.');
-      }
-    };
-    reader.readAsArrayBuffer(file);
   });
 }
