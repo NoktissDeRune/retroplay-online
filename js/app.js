@@ -15,10 +15,9 @@ async function initCatalogue() {
     tousLesJeux = await response.json();
 
     if (tousLesJeux.length > 0) {
-      afficherHeroBanner(tousLesJeux[0]); // Le 1er jeu est mis à la une
+      afficherHeroBanner(tousLesJeux[0]);
     }
 
-    afficherSectionPersonnelle();
     afficherJeux(tousLesJeux);
 
     // Écouteur de recherche
@@ -26,7 +25,7 @@ async function initCatalogue() {
       filtrerJeux(e.target.value, consoleFiltre);
     });
 
-    // Écouteurs de filtres console
+    // Écouteurs de filtres
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
@@ -38,7 +37,7 @@ async function initCatalogue() {
 
   } catch (erreur) {
     console.error('Erreur lors du chargement du catalogue:', erreur);
-    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue de jeux.</p>';
+    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue.</p>';
   }
 }
 
@@ -64,7 +63,11 @@ function afficherJeux(jeux) {
   grid.innerHTML = '';
 
   if (jeux.length === 0) {
-    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--text-muted);">Aucun jeu ne correspond à votre recherche.</p>';
+    const message = consoleFiltre === 'favorites' 
+      ? 'Vous n\'avez pas encore de favoris. Cliquez sur le ❤️ d\'un jeu pour l\'ajouter !'
+      : 'Aucun jeu ne correspond à votre recherche.';
+    
+    grid.innerHTML = `<p style="text-align: center; grid-column: 1/-1; color: var(--text-muted); padding: 3rem 0;">${message}</p>`;
     return;
   }
 
@@ -99,48 +102,42 @@ function creerCarteJeu(jeu, estFavori) {
     </a>
   `;
 
-  // Gestion du clic sur le cœur
+  // Gestion du clic sur le cœur avec arrêt de la propagation
   const favBtn = card.querySelector('.fav-btn');
   favBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    toggleFavori(jeu.id);
-    afficherSectionPersonnelle();
-    afficherJeux(tousLesJeux);
+    e.stopPropagation(); // Empêche d'ouvrir le jeu lors du clic sur le cœur
+    
+    const isNowFav = toggleFavori(jeu.id);
+    favBtn.classList.toggle('active', isNowFav);
+    favBtn.textContent = isNowFav ? '❤️' : '🤍';
+
+    // Si on est dans l'onglet favoris, rafraîchir l'affichage
+    if (consoleFiltre === 'favorites') {
+      const searchInput = document.getElementById('search-input');
+      filtrerJeux(searchInput.value, consoleFiltre);
+    }
   });
 
   return card;
 }
 
-function afficherSectionPersonnelle() {
-  const personalSection = document.getElementById('personal-section');
-  const personalGrid = document.getElementById('personal-grid');
-  const favorisIds = getFavoris();
-  const dernierJeuId = localStorage.getItem('retroplay_last_game');
-
-  // Récupération des jeux uniques (Favoris + Dernier jeu)
-  const idsAicher = [...new Set([...favorisIds, dernierJeuId].filter(Boolean))];
-  const jeuxPerso = tousLesJeux.filter(j => idsAicher.includes(j.id));
-
-  if (jeuxPerso.length === 0) {
-    personalSection.style.display = 'none';
-    return;
-  }
-
-  personalSection.style.display = 'block';
-  personalGrid.innerHTML = '';
-
-  jeuxPerso.forEach(jeu => {
-    const card = creerCarteJeu(jeu, favorisIds.includes(jeu.id));
-    personalGrid.appendChild(card);
-  });
-}
-
 function filtrerJeux(recherche, consoleCode) {
   const terme = recherche.toLowerCase().trim();
+  const favoris = getFavoris();
 
   const resultats = tousLesJeux.filter(jeu => {
     const matchTitre = jeu.title.toLowerCase().includes(terme);
-    const matchConsole = (consoleCode === 'all') || (jeu.console.toLowerCase() === consoleCode.toLowerCase());
+    
+    let matchConsole = false;
+    if (consoleCode === 'all') {
+      matchConsole = true;
+    } else if (consoleCode === 'favorites') {
+      matchConsole = favoris.includes(jeu.id);
+    } else {
+      matchConsole = (jeu.console.toLowerCase() === consoleCode.toLowerCase());
+    }
+
     return matchTitre && matchConsole;
   });
 
@@ -154,10 +151,14 @@ function getFavoris() {
 
 function toggleFavori(id) {
   let favs = getFavoris();
-  if (favs.includes(id)) {
-    favs = favs.filter(fId => fId !== id);
+  const index = favs.indexOf(id);
+  
+  if (index > -1) {
+    favs.splice(index, 1);
   } else {
     favs.push(id);
   }
+  
   localStorage.setItem('retroplay_favs', JSON.stringify(favs));
+  return favs.includes(id);
 }
