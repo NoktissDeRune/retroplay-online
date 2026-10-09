@@ -3,92 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="page-title">RetroPlay — Jouer</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Jouer — RetroPlay</title>
+  <link rel="stylesheet" href="css/style.css?v=3">
   <style>
-    /* Styles spécifiques au mode Cinéma / Player */
     .player-container {
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 1.5rem auto;
       padding: 0 1rem;
     }
-    
-    .player-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background: var(--bg-card);
-      color: var(--text-main);
-      text-decoration: none;
-      border-radius: var(--radius);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: background 0.2s;
-    }
-
-    .btn-back:hover {
-      background: var(--bg-hover);
-    }
-
-    .screen-box {
+    .emu-wrapper {
       width: 100%;
       height: 600px;
-      max-height: 75vh;
       background: #000;
       border-radius: var(--radius);
       overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-      position: relative;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-
-    .game-details {
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .controls-panel {
+      margin-top: 2rem;
       background: var(--bg-card);
-      padding: 1.5rem;
       border-radius: var(--radius);
+      padding: 1.5rem;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
-
-    .game-details h1 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      display: flex;
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .key-badge {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+    .tool-btn {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: inline-flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .tool-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent);
     }
   </style>
 </head>
 <body>
 
   <header>
-    <a href="index.html" class="logo">
-      🎮 Retro<span>Play</span>
-    </a>
+    <a href="index.html" class="logo">🎮 Retro<span>Play</span></a>
+    <a href="index.html" class="tool-btn">⬅ Retour au catalogue</a>
   </header>
 
   <main class="player-container">
-    <div class="player-header">
-      <a href="index.html" class="btn-back">← Retour au catalogue</a>
+    <!-- Conteneur EmulatorJS -->
+    <div class="emu-wrapper">
+      <div id="game"></div>
     </div>
 
-    <!-- Zone de l'émulateur -->
-    <div class="screen-box">
-      <div id="game-wrapper" style="width:100%; height:100%;">
-        <div id="game"></div>
+    <!-- En-tête du jeu & Actions -->
+    <div class="game-header">
+      <div>
+        <h1 id="game-title-display" style="font-size: 1.8rem; font-weight: 800;">
+          Chargement... <span id="game-badge-display" class="badge" style="position:static; vertical-align:middle;"></span>
+        </h1>
+        <p id="game-desc-display" style="color: var(--text-muted); margin-top: 0.4rem;"></p>
+      </div>
+      
+      <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+        <button id="btn-fav" class="tool-btn">🤍 Ajouter aux favoris</button>
       </div>
     </div>
 
-    <!-- Informations sur le jeu -->
-    <div class="game-details">
-      <h1 id="game-title-display">Chargement... <span id="game-badge-display" class="badge"></span></h1>
-      <p id="game-desc-display" style="color: var(--text-muted);"></p>
+    <!-- Panneau Sauvegardes & Contrôles -->
+    <div class="controls-panel">
+      <h3 style="margin-bottom: 0.5rem; color: var(--text-main);">💾 Sauvegardes & Commandes</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Vos parties sont automatiquement sauvegardées dans votre navigateur. Vous pouvez également exporter votre fichier <code>.sav</code> pour ne jamais perdre votre progression.
+      </p>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+        <button id="btn-export-save" class="tool-btn">📥 Exporter la sauvegarde (.sav)</button>
+        <button id="btn-import-save" class="tool-btn">📤 Importer une sauvegarde</button>
+        <input type="file" id="input-import-save" accept=".sav,.srm" style="display: none;">
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 1.5rem 0;">
+
+      <h4 style="margin-bottom: 0.8rem;">🎮 Touches Clavier par défaut</h4>
+      <div class="controls-grid">
+        <div><strong>Croix directionnelle :</strong> <span class="key-badge">Flèches</span></div>
+        <div><strong>Bouton A :</strong> <span class="key-badge">X</span> ou <span class="key-badge">K</span></div>
+        <div><strong>Bouton B :</strong> <span class="key-badge">Z</span> ou <span class="key-badge">J</span></div>
+        <div><strong>Start / Select :</strong> <span class="key-badge">Entrée</span> / <span class="key-badge">Maj</span></div>
+        <div><strong>L / R :</strong> <span class="key-badge">A</span> / <span class="key-badge">S</span></div>
+        <div><strong>Plein écran :</strong> Double-clic sur le jeu</div>
+      </div>
     </div>
   </main>
 
