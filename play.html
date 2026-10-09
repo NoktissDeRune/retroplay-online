@@ -95,28 +95,37 @@
       </div>
     </div>
 
-    <!-- Panneau Sauvegardes & Contrôles -->
-    <div class="controls-panel">
-      <h3 style="margin-bottom: 0.5rem; color: var(--text-main);">💾 Gestion des sauvegardes</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">
-        Vos parties sont automatiquement sauvegardées dans votre navigateur. Vous pouvez également exporter votre fichier <code>.sav</code> pour conserver une copie ou importer une sauvegarde existante.
-      </p>
+<!-- Panneau Guide de l'Émulateur -->
+<div class="controls-panel">
+  <h3 style="margin-bottom: 1rem; color: var(--text-main);">🎮 Guide des fonctionnalités de l'émulateur</h3>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem;">
     
-      <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
-        <button id="btn-export-save" class="tool-btn">📥 Exporter la sauvegarde (.sav)</button>
-        <button id="btn-import-save" class="tool-btn">📤 Importer une sauvegarde</button>
-        <input type="file" id="input-import-save" accept=".sav,.srm" style="display: none;">
-      </div>
-    
-      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 1.5rem 0;">
-    
-      <h4 style="margin-bottom: 0.5rem; color: var(--text-main);">🎮 Configuration des contrôles & manette</h4>
-      <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
-        Pour consulter ou personnaliser vos touches, survolez le jeu et cliquez sur l'icône <strong>manette</strong> dans la barre en bas de l'émulateur.
-      </p>
+    <!-- Bloc Sauvegardes -->
+    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+      <h4 style="color: var(--accent); margin-bottom: 0.6rem;">💾 Sauvegardes rapide & fichier</h4>
+      <ul style="font-size: 0.85rem; line-height: 1.6; list-style: none; padding: 0;">
+        <li style="margin-bottom: 0.5rem;">💾 <strong>Sauvegarder l'état (State) :</strong> Prend une capture instantanée de ton jeu.</li>
+        <li style="margin-bottom: 0.5rem;">📂 <strong>Charger l'état :</strong> Reprend exactement là où la disquette a été cliquée.</li>
+        <li style="margin-bottom: 0.5rem;">📥 <strong>Exporter la sauvegarde (.srm) :</strong> Télécharge le fichier de sauvegarde interne du jeu sur ton PC.</li>
+        <li>📤 <strong>Importer la sauvegarde (.srm) :</strong> Charge un fichier `.srm` depuis ton PC pour reprendre une partie.</li>
+      </ul>
     </div>
+    
+    <!-- Bloc Contrôles & Système -->
+    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+      <h4 style="color: var(--accent); margin-bottom: 0.6rem;">⚙️ Contrôles & Options</h4>
+      <ul style="font-size: 0.85rem; line-height: 1.6; list-style: none; padding: 0;">
+        <li style="margin-bottom: 0.5rem;">🔄 <strong>Redémarrer :</strong> Relance la console à zéro.</li>
+        <li style="margin-bottom: 0.5rem;">⏸️ / ▶️ <strong>Pause / Reprendre :</strong> Fige ou relance la partie.</li>
+        <li style="margin-bottom: 0.5rem;">🎮 <strong>Configuration :</strong> Mappe les touches du clavier ou de ta manette (Xbox, PS5, Switch).</li>
+        <li style="margin-bottom: 0.5rem;">😊 <strong>Cheats :</strong> Permet d'ajouter des codes de triche (Action Replay / GameShark).</li>
+        <li>🛢️ <strong>Cache Manager :</strong> Gère les données temporaires de la console stockées dans le navigateur.</li>
+      </ul>
+    </div>
+  </div>
+</div>
   </main>
-
   <script src="js/player.js"></script>
 </body>
 </html>
