@@ -11,8 +11,23 @@ async function initCatalogue() {
   const filterBtns = document.querySelectorAll('.filter-btn');
 
   try {
-    const response = await fetch('data/games.json');
-    tousLesJeux = await response.json();
+    // ----------------------------------------------------
+    // MODIFICATION SUPABASE ICI :
+    // Remplace le fetch('data/games.json') par Supabase
+    // ----------------------------------------------------
+    const { data: games, error } = await supabaseClient
+      .from('games')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Normalisation des IDs et des champs pour être 100% compatible
+    tousLesJeux = (games || []).map(jeu => ({
+      ...jeu,
+      id: String(jeu.id), // Garantit que l'ID est une chaîne pour le localStorage
+      cover: jeu.cover_url || jeu.cover // Gère le champ cover_url de Supabase
+    }));
 
     if (tousLesJeux.length > 0) {
       afficherHeroBanner(tousLesJeux[0]);
@@ -21,9 +36,11 @@ async function initCatalogue() {
     afficherJeux(tousLesJeux);
 
     // Écouteur de recherche
-    searchInput.addEventListener('input', (e) => {
-      filtrerJeux(e.target.value, consoleFiltre);
-    });
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        filtrerJeux(e.target.value, consoleFiltre);
+      });
+    }
 
     // Écouteurs de filtres
     filterBtns.forEach(btn => {
@@ -31,18 +48,21 @@ async function initCatalogue() {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         consoleFiltre = btn.dataset.console;
-        filtrerJeux(searchInput.value, consoleFiltre);
+        const query = searchInput ? searchInput.value : '';
+        filtrerJeux(query, consoleFiltre);
       });
     });
 
   } catch (erreur) {
-    console.error('Erreur lors du chargement du catalogue:', erreur);
-    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue.</p>';
+    console.error('Erreur lors du chargement du catalogue Supabase:', erreur);
+    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue depuis la base de données.</p>';
   }
 }
 
 function afficherHeroBanner(jeu) {
   const heroContainer = document.getElementById('hero-section');
+  if (!heroContainer) return;
+
   const coverUrl = jeu.cover || 'https://via.placeholder.com/800x400';
 
   heroContainer.innerHTML = `
@@ -60,6 +80,8 @@ function afficherHeroBanner(jeu) {
 
 function afficherJeux(jeux) {
   const grid = document.getElementById('games-grid');
+  if (!grid) return;
+
   grid.innerHTML = '';
 
   if (jeux.length === 0) {
@@ -102,20 +124,20 @@ function creerCarteJeu(jeu, estFavori) {
     </a>
   `;
 
-  // Gestion du clic sur le cœur avec arrêt de la propagation
+  // Gestion du clic sur le cœur
   const favBtn = card.querySelector('.fav-btn');
   favBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Empêche d'ouvrir le jeu lors du clic sur le cœur
+    e.stopPropagation();
     
     const isNowFav = toggleFavori(jeu.id);
     favBtn.classList.toggle('active', isNowFav);
     favBtn.textContent = isNowFav ? '❤️' : '🤍';
 
-    // Si on est dans l'onglet favoris, rafraîchir l'affichage
     if (consoleFiltre === 'favorites') {
       const searchInput = document.getElementById('search-input');
-      filtrerJeux(searchInput.value, consoleFiltre);
+      const query = searchInput ? searchInput.value : '';
+      filtrerJeux(query, consoleFiltre);
     }
   });
 
