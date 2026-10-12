@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ports PC & Jeux Web — RetroPlay</title>
+  <meta name="description" content="Jouez aux grands classiques du jeu PC et console (Half-Life, GTA Vice City, Quake, Skate 3) directement dans votre navigateur web !">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://noktissderune.github.io/retroplay-online/ports.html">
+  <meta property="og:title" content="Ports PC & Jeux Web — RetroPlay">
+  <meta property="og:description" content="Découvrez notre sélection de ports web légendaires jouables instantanément sans installation.">
+  <meta property="og:image" content="https://noktissderune.github.io/retroplay-online/assets/preview.png">
+
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .ports-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .ports-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .ports-header h1 {
+      font-size: 2.2rem;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+    .ports-header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    .category-title {
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin: 2rem 0 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 0.5rem;
+    }
+    .ports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .port-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .port-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+    .port-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+    .port-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+      line-height: 1.4;
+    }
+    .port-btn {
+      background: var(--accent);
+      color: #000;
+      text-align: center;
+      padding: 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    .port-btn:hover {
+      opacity: 0.9;
+    }
+    .nav-back {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .nav-back:hover {
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ports-container">
+    <a href="index.html" class="nav-back">← Retour au catalogue principal</a>
+    
+    <div class="ports-header">
+      <h1>🌐 Ports PC & Légendes du Web</h1>
+      <p>Retrouvez une sélection de jeux PC cultes et de ports open-source jouables directement dans votre navigateur.</p>
+    </div>
+
+    <!-- Catégorie 1 : FPS & Action -->
+    <h2 class="category-title">🎯 FPS & Action Légendaires</h2>
+    <div class="ports-grid">
+      <div class="port-card">
+        <div>
+          <div class="port-title">Half-Life / CS 1.6</div>
+          <div class="port-desc">Le monument du FPS et son mod mythique portés sur le web via Xash3D.</div>
+        </div>
+        <a href="https://x8bitrain.github.io/webXash/" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+
+      <div class="port-card">
+        <div>
+          <div class="port-title">Halo CE</div>
+          <div class="port-desc">Le chef-d'œuvre de Bungie jouable directement en ligne.</div>
+        </div>
+        <a href="https://mitchellhynes.com/halo" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+
+      <div class="port-card">
+        <div>
+          <div class="port-title">Quake (1, 2 & 3)</div>
+          <div class="port-desc">Les classiques du fast-FPS par id Software en version web fluide.</div>
+        </div>
+        <a href="https://q3.pieter.com" target="_blank" class="port-btn">Jouer à Quake 3 ↗</a>
+      </div>
+
+      <div class="port-card">
+        <div>
+          <div class="port-title">Unreal Tournament</div>
+          <div class="port-desc">L'arène de tir frénétique de référence adaptée pour le navigateur.</div>
+        </div>
+        <a href="https://ut.pieter.com" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+    </div>
+
+    <!-- Catégorie 2 : Open World & Arcade -->
+    <h2 class="category-title">🚗 Open World & Arcade</h2>
+    <div class="ports-grid">
+      <div class="port-card">
+        <div>
+          <div class="port-title">GTA Vice City</div>
+          <div class="port-desc">Plongez dans l'ambiance des années 80 à Vice City depuis votre navigateur.</div>
+        </div>
+        <a href="https://joncodeofficial.github.io/gta-vice-city-" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+
+      <div class="port-card">
+        <div>
+          <div class="port-title">Skate 3</div>
+          <div class="port-desc">Le célèbre jeu de skate d'Electronic Arts adapté pour le web.</div>
+        </div>
+        <a href="https://skate.aaddpp.lol" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+
+      <div class="port-card">
+        <div>
+          <div class="port-title">The Simpsons: Hit & Run</div>
+          <div class="port-desc">Le GTA-like culte se déroulant à Springfield.</div>
+        </div>
+        <a href="https://shar-wasm.cjoseph.workers.dev/?skipmovie" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+    </div>
+
+    <!-- Catégorie 3 : Zombies & Survival -->
+    <h2 class="category-title">🧟 Zombies & Survival</h2>
+    <div class="ports-grid">
+      <div class="port-card">
+        <div>
+          <div class="port-title">Kino der Toten</div>
+          <div class="port-desc">La carte légendaire de Zombies de Call of Duty en version web.</div>
+        </div>
+        <a href="https://kino-der-toten.pages.dev" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+
+      <div class="port-card">
+        <div>
+          <div class="port-title">BO1 Zombies</div>
+          <div class="port-desc">Survivez aux vagues de morts-vivants inspirées du classique de Treyarch.</div>
+        </div>
+        <a href="https://vel.gg/bo1z" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+
+      <div class="port-card">
+        <div>
+          <div class="port-title">Return to Castle Wolfenstein</div>
+          <div class="port-desc">Infiltration, paranormale et action dans ce classique absolu.</div>
+        </div>
+        <a href="https://rtcw.pieter.com" target="_blank" class="port-btn">Jouer en ligne ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
