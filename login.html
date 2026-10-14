@@ -3,57 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RetroPlay — Connexion Admin</title>
+  <title>RetroPlay — Connexion</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .login-container {
-      max-width: 400px;
-      margin: 5rem auto;
-      background: var(--bg-card, #1e293b);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .login-input {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid #475569;
-      background: #0f172a;
-      color: white;
-      font-size: 1rem;
-    }
-    .login-btn {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: none;
-      background: #3b82f6;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .login-btn:hover {
-      background: #2563eb;
-    }
-    #error-msg {
-      color: #ef4444;
-      font-size: 0.875rem;
-      text-align: center;
-    }
-  </style>
 </head>
 <body>
 
-<div id="header-container"></div>
+  <!-- Header injecté dynamiquement -->
+  <div id="header-container"></div>
 
   <main>
     <div class="login-container">
-      <h2 style="margin-bottom: 1.5rem; text-align: center; color: white;">Espace Administration</h2>
+      <h2 style="margin-bottom: 1.5rem; text-align: center; color: white;">Connexion</h2>
       
       <form id="login-form" class="login-form">
         <input type="email" id="email" class="login-input" placeholder="Ton email" required>
@@ -67,6 +27,10 @@
   <!-- Scripts Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
+
+  <!-- Script de gestion du Header dynamique -->
+  <script src="js/components.js"></script>
+
   <script>
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -87,7 +51,7 @@
       } else {
         errorDiv.style.color = '#22c55e';
         errorDiv.textContent = 'Connexion réussie ! Redirection...';
-        // Redirection vers le futur dashboard admin
+        // Redirection vers l'accueil après connexion réussie
         setTimeout(() => {
           window.location.href = 'index.html';
         }, 1000);
