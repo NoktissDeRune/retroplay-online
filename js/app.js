@@ -1,9 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
-  initCatalogue();
+  initApp();
 });
 
 let tousLesJeux = [];
 let consoleFiltre = 'all';
+let currentUser = null;
+let userFavorisIds = []; // Stocke les IDs des favoris de l'utilisateur connecté
+
+async function initApp() {
+  // 1. Vérifier si un utilisateur est connecté
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  currentUser = session ? session.user : null;
+
+  // Mettre à jour l'UI du Header (Connexion / Profil / Déconnexion)
+  mettreAJourHeaderAuth();
+
+  // 2. Charger les favoris depuis Supabase si connecté, sinon depuis le localStorage
+  await chargerFavoris();
+
+  // 3. Charger le catalogue des jeux
+  initCatalogue();
+}
+
+// --- Gestion de l'UI Header Auth ---
+function mettreAJourHeaderAuth() {
+  const header = document.querySelector('header');
+  if (!header) return;
+
+  // Vérifier si un bloc auth existe déjà pour éviter les doublons
+  let authNav = document.getElementById('auth-nav');
+  if (!authNav) {
+    authNav = document.createElement('div');
+    authNav.id = 'auth-nav';
+    authNav.style.cssText = 'margin-left: auto; display: flex; gap: 1rem; align-items: center;';
+    header.appendChild(authNav);
+  }
+
+  if (currentUser) {
+    authNav.innerHTML = `
+      <span style="font-size: 0.85rem; color: #94a3b8; display: none; @media(min-width: 768px){display:inline;}">${currentUser.email}</span>
+      <button id="btn-logout-header" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Déconnexion</button>
+    `;
+    document.getElementById('btn-logout-header').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.reload();
+    });
+  } else {
+    authNav.innerHTML = `
+      <a href="login.html" style="color: white; text-decoration: none; font-size: 0.9rem;">Connexion</a>
+      <a href="register.html" style="background: #3b82f6; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.9rem; font-weight: bold;">S'inscrire</a>
+    `;
+  }
+}
+
+// --- Chargement des Favoris ---
+async function chargerFavoris() {
+  if (currentUser) {
+    // Récupérer depuis Supabase
+    const { data, error } = await supabaseClient
+      .from('favorites')
+      .select('game_id')
+      .eq('user_id', currentUser.id);
+
+    if (!error && data) {
+      userFavorisIds = data.map(f => String(f.game_id));
+    }
+  } else {
+    // Mode invité : LocalStorage
+    userFavorisIds = JSON.parse(localStorage.getItem('retroplay_favs') || '[]');
+  }
+}
 
 async function initCatalogue() {
   const grid = document.getElementById('games-grid');
@@ -11,10 +77,6 @@ async function initCatalogue() {
   const filterBtns = document.querySelectorAll('.filter-btn');
 
   try {
-    // ----------------------------------------------------
-    // MODIFICATION SUPABASE ICI :
-    // Remplace le fetch('data/games.json') par Supabase
-    // ----------------------------------------------------
     const { data: games, error } = await supabaseClient
       .from('games')
       .select('*')
@@ -22,11 +84,10 @@ async function initCatalogue() {
 
     if (error) throw error;
 
-    // Normalisation des IDs et des champs pour être 100% compatible
     tousLesJeux = (games || []).map(jeu => ({
       ...jeu,
-      id: String(jeu.id), // Garantit que l'ID est une chaîne pour le localStorage
-      cover: jeu.cover_url || jeu.cover // Gère le champ cover_url de Supabase
+      id: String(jeu.id),
+      cover: jeu.cover_url || jeu.cover
     }));
 
     if (tousLesJeux.length > 0) {
@@ -35,14 +96,12 @@ async function initCatalogue() {
 
     afficherJeux(tousLesJeux);
 
-    // Écouteur de recherche
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         filtrerJeux(e.target.value, consoleFiltre);
       });
     }
 
-    // Écouteurs de filtres
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
@@ -55,7 +114,9 @@ async function initCatalogue() {
 
   } catch (erreur) {
     console.error('Erreur lors du chargement du catalogue Supabase:', erreur);
-    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue depuis la base de données.</p>';
+    if (grid) {
+      grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue depuis la base de données.</p>';
+    }
   }
 }
 
@@ -93,10 +154,9 @@ function afficherJeux(jeux) {
     return;
   }
 
-  const favoris = getFavoris();
-
   jeux.forEach(jeu => {
-    const card = creerCarteJeu(jeu, favoris.includes(jeu.id));
+    const estFavori = userFavorisIds.includes(jeu.id);
+    const card = creerCarteJeu(jeu, estFavori);
     grid.appendChild(card);
   });
 }
@@ -124,13 +184,12 @@ function creerCarteJeu(jeu, estFavori) {
     </a>
   `;
 
-  // Gestion du clic sur le cœur
   const favBtn = card.querySelector('.fav-btn');
-  favBtn.addEventListener('click', (e) => {
+  favBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     e.stopPropagation();
     
-    const isNowFav = toggleFavori(jeu.id);
+    const isNowFav = await toggleFavori(jeu.id);
     favBtn.classList.toggle('active', isNowFav);
     favBtn.textContent = isNowFav ? '❤️' : '🤍';
 
@@ -146,7 +205,6 @@ function creerCarteJeu(jeu, estFavori) {
 
 function filtrerJeux(recherche, consoleCode) {
   const terme = recherche.toLowerCase().trim();
-  const favoris = getFavoris();
 
   const resultats = tousLesJeux.filter(jeu => {
     const matchTitre = jeu.title.toLowerCase().includes(terme);
@@ -155,7 +213,7 @@ function filtrerJeux(recherche, consoleCode) {
     if (consoleCode === 'all') {
       matchConsole = true;
     } else if (consoleCode === 'favorites') {
-      matchConsole = favoris.includes(jeu.id);
+      matchConsole = userFavorisIds.includes(jeu.id);
     } else {
       matchConsole = (jeu.console.toLowerCase() === consoleCode.toLowerCase());
     }
@@ -166,21 +224,45 @@ function filtrerJeux(recherche, consoleCode) {
   afficherJeux(resultats);
 }
 
-// --- Fonctions LocalStorage ---
-function getFavoris() {
-  return JSON.parse(localStorage.getItem('retroplay_favs') || '[]');
-}
+// --- Logique Synchro Favoris (Supabase ou LocalStorage) ---
+async function toggleFavori(gameId) {
+  const index = userFavorisIds.indexOf(gameId);
+  const isCurrentlyFav = index > -1;
 
-function toggleFavori(id) {
-  let favs = getFavoris();
-  const index = favs.indexOf(id);
-  
-  if (index > -1) {
-    favs.splice(index, 1);
+  if (currentUser) {
+    // Utilisateur connecté : Sauvegarde dans Supabase
+    if (isCurrentlyFav) {
+      // Supprimer
+      const { error } = await supabaseClient
+        .from('favorites')
+        .delete()
+        .eq('user_id', currentUser.id)
+        .eq('game_id', gameId);
+
+      if (!error) {
+        userFavorisIds.splice(index, 1);
+        return false;
+      }
+    } else {
+      // Ajouter
+      const { error } = await supabaseClient
+        .from('favorites')
+        .insert([{ user_id: currentUser.id, game_id: gameId }]);
+
+      if (!error) {
+        userFavorisIds.push(gameId);
+        return true;
+      }
+    }
+    return isCurrentlyFav; // Retourne l'état précédent en cas d'erreur
   } else {
-    favs.push(id);
+    // Mode invité : LocalStorage
+    if (isCurrentlyFav) {
+      userFavorisIds.splice(index, 1);
+    } else {
+      userFavorisIds.push(gameId);
+    }
+    localStorage.setItem('retroplay_favs', JSON.stringify(userFavorisIds));
+    return !isCurrentlyFav;
   }
-  
-  localStorage.setItem('retroplay_favs', JSON.stringify(favs));
-  return favs.includes(id);
 }
