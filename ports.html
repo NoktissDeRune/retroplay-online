@@ -29,7 +29,7 @@
   <!-- Script de gestion du Header dynamique -->
   <script src="js/components.js"></script>
 
-  <script>
+<script>
     async function loadWebGames() {
       const grid = document.getElementById('web-games-grid');
       if (!grid) return;
@@ -40,12 +40,12 @@
         .order('created_at', { ascending: false });
 
       if (error) {
-        grid.innerHTML = '<p style="color: #ef4444;">Erreur lors du chargement des liens.</p>';
+        grid.innerHTML = '<p style="color: #ef4444; padding: 0 2rem;">Erreur lors du chargement des liens.</p>';
         return;
       }
 
-      if (links.length === 0) {
-        grid.innerHTML = '<p style="color: var(--text-muted);">Aucun lien web pour le moment.</p>';
+      if (!links || links.length === 0) {
+        grid.innerHTML = '<p style="color: var(--text-muted); padding: 0 2rem;">Aucun lien web pour le moment.</p>';
         return;
       }
 
@@ -54,11 +54,14 @@
         const card = document.createElement('div');
         card.className = 'web-card';
         card.innerHTML = `
-          <div>
+          <div class="web-card-content">
             <h3>${link.title}</h3>
             <p>${link.description || 'Découvrir ce site de jeux en ligne.'}</p>
           </div>
-          <a href="${link.url}" target="_blank" class="btn-visit">Visiter le site ↗</a>
+          <a href="${link.url}" target="_blank" class="btn-visit">
+            <span>Visiter le site</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
         `;
         grid.appendChild(card);
       });
