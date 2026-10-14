@@ -3,144 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jouer — RetroPlay</title>
-  <meta name="description" content="Jouez à vos jeux rétro préférés directement dans votre navigateur sur RetroPlay.">
-
-  <!-- Open Graph / Facebook / Discord / WhatsApp -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://noktissderune.github.io/retroplay-online/play.html">
-  <meta property="og:title" content="Jouer sur RetroPlay — Émulateur Rétro en Ligne">
-  <meta property="og:description" content="Lancez votre partie instantanément sur RetroPlay. Compatible sauvegarde et manettes !">
-  <meta property="og:image" content="https://noktissderune.github.io/retroplay-online/assets/preview.png">
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Jouer sur RetroPlay — Émulateur Rétro en Ligne">
-  <meta name="twitter:description" content="Lancez votre partie instantanément sur RetroPlay.">
-  <meta name="twitter:image" content="https://noktissderune.github.io/retroplay-online/assets/preview.png">
-
-  <link rel="stylesheet" href="css/style.css?v=3">
-  <style>
-    .player-container {
-      max-width: 1000px;
-      margin: 1.5rem auto;
-      padding: 0 1rem;
-    }
-    .emu-wrapper {
-      width: 100%;
-      height: 600px;
-      background: #000;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .game-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .controls-panel {
-      margin-top: 2rem;
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .controls-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .key-badge {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: var(--accent);
-    }
-    .tool-btn {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-main);
-      padding: 0.6rem 1.2rem;
-      border-radius: var(--radius);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .tool-btn:hover {
-      background: var(--bg-hover);
-      border-color: var(--accent);
-    }
-  </style>
+  <title>RetroPlay — Jouer</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <header>
-    <a href="index.html" class="logo">🎮 Retro<span>Play</span></a>
-    <a href="index.html" class="tool-btn">⬅ Retour au catalogue</a>
-  </header>
+  <!-- Header injecté dynamiquement -->
+  <div id="header-container"></div>
 
-  <main class="player-container">
-    <!-- Conteneur EmulatorJS -->
-    <div class="emu-wrapper">
-      <div id="game"></div>
-    </div>
-
-    <!-- En-tête du jeu & Actions -->
-    <div class="game-header">
-      <div>
-        <h1 id="game-title-display" style="font-size: 1.8rem; font-weight: 800;">
-          Chargement... <span id="game-badge-display" class="badge" style="position:static; vertical-align:middle;"></span>
-        </h1>
-        <p id="game-desc-display" style="color: var(--text-muted); margin-top: 0.4rem;"></p>
+  <main>
+    <div class="play-container">
+      <!-- Zone d'affichage de l'émulateur EmulatorJS -->
+      <div id="game-container">
+        <!-- L'émulateur s'injectera ici -->
       </div>
-      
-      <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
-        <button id="btn-fav" class="tool-btn">🤍 Ajouter aux favoris</button>
+
+      <!-- Informations sur le jeu en cours -->
+      <div class="game-details">
+        <h1 id="game-title">Chargement du jeu...</h1>
+        <p id="game-description">Veuillez patienter pendant que nous préparons votre partie.</p>
       </div>
     </div>
-
-<!-- Panneau Guide de l'Émulateur -->
-<div class="controls-panel">
-  <h3 style="margin-bottom: 1rem; color: var(--text-main);">🎮 Guide des fonctionnalités de l'émulateur</h3>
-  
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem;">
-    
-    <!-- Bloc Sauvegardes -->
-    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-      <h4 style="color: var(--accent); margin-bottom: 0.6rem;">💾 Sauvegardes rapide & fichier</h4>
-      <ul style="font-size: 0.85rem; line-height: 1.6; list-style: none; padding: 0;">
-        <li style="margin-bottom: 0.5rem;">💾 <strong>Sauvegarder l'état (State) :</strong> Prend une capture instantanée de ton jeu.</li>
-        <li style="margin-bottom: 0.5rem;">📂 <strong>Charger l'état :</strong> Reprend exactement là où la disquette a été cliquée.</li>
-        <li style="margin-bottom: 0.5rem;">📥 <strong>Exporter la sauvegarde (.srm) :</strong> Télécharge le fichier de sauvegarde interne du jeu sur ton PC.</li>
-        <li>📤 <strong>Importer la sauvegarde (.srm) :</strong> Charge un fichier `.srm` depuis ton PC pour reprendre une partie.</li>
-      </ul>
-    </div>
-    
-    <!-- Bloc Contrôles & Système -->
-    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-      <h4 style="color: var(--accent); margin-bottom: 0.6rem;">⚙️ Contrôles & Options</h4>
-      <ul style="font-size: 0.85rem; line-height: 1.6; list-style: none; padding: 0;">
-        <li style="margin-bottom: 0.5rem;">🔄 <strong>Redémarrer :</strong> Relance la console à zéro.</li>
-        <li style="margin-bottom: 0.5rem;">⏸️ / ▶️ <strong>Pause / Reprendre :</strong> Fige ou relance la partie.</li>
-        <li style="margin-bottom: 0.5rem;">🎮 <strong>Configuration :</strong> Mappe les touches du clavier ou de ta manette.</li>
-        <li style="margin-bottom: 0.5rem;">😊 <strong>Cheats :</strong> Permet d'ajouter des codes de triche.</li>
-        <li>🛢️ <strong>Cache Manager :</strong> Gère les données temporaires de la console stockées dans le navigateur.</li>
-      </ul>
-    </div>
-  </div>
-</div>
   </main>
-  <script src="js/player.js"></script>
+
+  <!-- Scripts Supabase & Configuration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+
+  <!-- Script de gestion du Header dynamique -->
+  <script src="js/components.js"></script>
+
+  <!-- Script spécifique pour récupérer le jeu via l'URL et lancer EmulatorJS -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameId = urlParams.get('id');
+
+    async function loadGameData() {
+      if (!gameId) {
+        document.getElementById('game-title').textContent = "Aucun jeu sélectionné";
+        document.getElementById('game-description').textContent = "Retournez sur l'accueil pour choisir un jeu à lancer.";
+        return;
+      }
+
+      const { data: game, error } = await supabaseClient
+        .from('games')
+        .select('*')
+        .eq('id', gameId)
+        .single();
+
+      if (error || !game) {
+        document.getElementById('game-title').textContent = "Erreur";
+        document.getElementById('game-description').textContent = "Impossible de charger les données de ce jeu.";
+        return;
+      }
+
+      document.getElementById('game-title').textContent = game.title;
+      document.getElementById('game-description').textContent = game.description || "Aucune description disponible.";
+
+      window.EJS_player = "#game-container";
+      window.EJS_gameUrl = game.rom_url;
+      window.EJS_core = game.console;
+      window.EJS_pathtodata = "data/";
+
+      const script = document.createElement('script');
+      script.src = "data/loader.js";
+      document.body.appendChild(script);
+    }
+
+    loadGameData();
+  </script>
 </body>
 </html>
