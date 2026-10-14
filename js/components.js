@@ -1,3 +1,4 @@
+// Function pour charger automatiquement le Header
 async function loadHeader() {
   const container = document.getElementById('header-container');
   if (!container) return;
@@ -9,12 +10,12 @@ async function loadHeader() {
     const html = await response.text();
     container.innerHTML = html;
 
-    // Une fois le header injecté dans le DOM, on met à jour les boutons d'auth (Connexion/Admin/Déconnexion)
+    // Mise à jour de l'état de connexion utilisateur
     if (typeof mettreAJourHeaderAuth === 'function') {
       mettreAJourHeaderAuth();
     }
 
-    // Activer la classe "active" sur le lien de la page courante
+    // Activer la surbrillance de la page courante
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = container.querySelectorAll('.header-nav a');
     navLinks.forEach(link => {
@@ -28,5 +29,20 @@ async function loadHeader() {
   }
 }
 
-// Charger le header dès que le DOM est prêt
-document.addEventListener('DOMContentLoaded', loadHeader);
+// Fonction pour injecter les éléments CSS/JS globaux dans le <head> si absents
+function setupGlobalHead() {
+  const head = document.head;
+
+  // En cas d'oubli du CSS principal
+  if (!document.querySelector('link[href*="style.css"]')) {
+    const cssLink = document.createElement('link');
+    cssLink.rel = 'stylesheet';
+    cssLink.href = 'css/style.css';
+    head.appendChild(cssLink);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupGlobalHead();
+  loadHeader();
+});
