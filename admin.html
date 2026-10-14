@@ -210,6 +210,7 @@
         window.location.href = 'login.html';
       } else {
         loadAdminGames();
+        loadAdminWebLinks()
       }
     }
 
@@ -283,6 +284,70 @@
         alert('Erreur lors de la suppression : ' + error.message);
       } else {
         loadAdminGames();
+      }
+    }
+
+    // --- Gestion des liens Web dans l'Admin ---
+    async function loadAdminWebLinks() {
+      const { data: links, error } = await supabaseClient
+        .from('web_links')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const tbody = document.querySelector('#admin-web-table tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (error) {
+        console.error('Erreur chargement liens web:', error);
+        return;
+      }
+
+      links.forEach(link => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${link.title}</td>
+          <td><a href="${link.url}" target="_blank" style="color: #3b82f6;">${link.url}</a></td>
+          <td><button class="btn-delete" onclick="deleteWebLink('${link.id}')">Supprimer</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('add-web-link-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const newLink = {
+        title: document.getElementById('web-title').value,
+        url: document.getElementById('web-url').value,
+        description: document.getElementById('web-description').value,
+      };
+
+      const { error } = await supabaseClient
+        .from('web_links')
+        .insert([newLink]);
+
+      if (error) {
+        alert('Erreur lors de l\'ajout : ' + error.message);
+      } else {
+        alert('Lien web ajouté avec succès !');
+        document.getElementById('add-web-link-form').reset();
+        loadAdminWebLinks();
+      }
+    });
+
+    async function deleteWebLink(id) {
+      if (!confirm('Voulez-vous vraiment supprimer ce lien ?')) return;
+
+      const { error } = await supabaseClient
+        .from('web_links')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert('Erreur lors de la suppression : ' + error.message);
+      } else {
+        loadAdminWebLinks();
       }
     }
 
