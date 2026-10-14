@@ -159,6 +159,42 @@
           <!-- Injecté par JS -->
         </tbody>
       </table>
+
+      <!-- Formulaire d'ajout de lien web -->
+      <h3 style="margin-top: 2rem;">Ajouter une pépite Web</h3>
+      <form id="add-web-link-form" class="admin-form">
+        <div class="form-group">
+          <label for="web-title">Nom du site / jeu</label>
+          <input type="text" id="web-title" class="admin-input" placeholder="ex: Classic Reload" required>
+        </div>
+
+        <div class="form-group">
+          <label for="web-url">URL du site</label>
+          <input type="url" id="web-url" class="admin-input" placeholder="https://..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="web-description">Description rapide</label>
+          <textarea id="web-description" class="admin-textarea" placeholder="Pourquoi ce site est cool..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Ajouter le lien Web</button>
+      </form>
+
+      <!-- Liste des liens web existants -->
+      <h3>Liens Web actuels</h3>
+      <table id="admin-web-table">
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>URL</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Injecté par JS -->
+        </tbody>
+      </table>
     </div>
   </main>
 
