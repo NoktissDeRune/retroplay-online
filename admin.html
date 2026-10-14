@@ -5,103 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RetroPlay — Administration</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .admin-container {
-      max-width: 800px;
-      margin: 3rem auto;
-      background: var(--bg-card, #1e293b);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      color: white;
-    }
-    .admin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid #475569;
-      padding-bottom: 1rem;
-    }
-    .admin-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 3rem;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .form-group label {
-      font-size: 0.875rem;
-      color: #94a3b8;
-    }
-    .admin-input, .admin-textarea {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid #475569;
-      background: #0f172a;
-      color: white;
-      font-size: 1rem;
-    }
-    .admin-textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-    .btn-submit {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: none;
-      background: #22c55e;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-submit:hover {
-      background: #16a34a;
-    }
-    .btn-logout {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .btn-logout:hover {
-      background: #dc2626;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-    th, td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid #334155;
-      font-size: 0.9rem;
-    }
-    th {
-      color: #94a3b8;
-    }
-    .btn-delete {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
 
-<div id="header-container"></div>
+  <!-- Header injecté dynamiquement -->
+  <div id="header-container"></div>
 
   <main>
     <div class="admin-container">
@@ -197,6 +105,10 @@
   <!-- Scripts Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
+  
+  <!-- Script de gestion du Header dynamique -->
+  <script src="js/components.js"></script>
+
   <script>
     // Vérification de la session à l'ouverture de la page
     async function checkAuth() {
@@ -206,7 +118,7 @@
         window.location.href = 'login.html';
       } else {
         loadAdminGames();
-        loadAdminWebLinks()
+        loadAdminWebLinks();
       }
     }
 
@@ -224,6 +136,7 @@
         .order('created_at', { ascending: false });
 
       const tbody = document.querySelector('#admin-games-table tbody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       if (error) {
