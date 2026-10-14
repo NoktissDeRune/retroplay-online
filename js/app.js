@@ -23,11 +23,10 @@ async function initApp() {
 }
 
 // --- Gestion de l'UI Header Auth ---
-function mettreAJourHeaderAuth() {
+async function mettreAJourHeaderAuth() {
   const header = document.querySelector('header');
   if (!header) return;
 
-  // Vérifier si un bloc auth existe déjà pour éviter les doublons
   let authNav = document.getElementById('auth-nav');
   if (!authNav) {
     authNav = document.createElement('div');
@@ -37,7 +36,20 @@ function mettreAJourHeaderAuth() {
   }
 
   if (currentUser) {
+    // Interroger la base de données pour savoir si l'utilisateur est admin
+    let estAdmin = false;
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (profile && profile.is_admin) {
+      estAdmin = true;
+    }
+
     authNav.innerHTML = `
+      ${estAdmin ? '<a href="admin.html" style="background: #f59e0b; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">🛠️ Admin</a>' : ''}
       <span style="font-size: 0.85rem; color: #94a3b8; display: none; @media(min-width: 768px){display:inline;}">${currentUser.email}</span>
       <button id="btn-logout-header" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Déconnexion</button>
     `;
