@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. VARIABLES & REINITIALISATION
+   ========================================================================== */
 :root {
   --bg-main: #0f1015;
   --bg-card: #181a20;
@@ -9,7 +12,7 @@
   --radius: 12px;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -22,17 +25,27 @@ body {
   min-height: 100vh;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  background: rgba(15, 16, 21, 0.8);
-  backdrop-filter: blur(10px);
+/* ==========================================================================
+   2. HEADER MODERNE (Style Netflix / Streaming)
+   ========================================================================== */
+header, .main-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(15, 16, 21, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .logo {
@@ -49,7 +62,60 @@ header {
   color: var(--accent);
 }
 
-/* Hero Section */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #fff;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Bouton Arcade Web dans le header */
+.nav-arcade-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-arcade-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.nav-arcade-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   3. BANNIERE HERO (Jeu à la une)
+   ========================================================================== */
 .hero-container {
   max-width: 1400px;
   margin: 1.5rem auto 2rem;
@@ -132,7 +198,9 @@ header {
   background: var(--text-main);
 }
 
-/* Controls & Grid */
+/* ==========================================================================
+   4. BARRE DE RECHERCHE & FILTRES
+   ========================================================================== */
 .controls-bar {
   display: flex;
   gap: 1rem;
@@ -174,6 +242,9 @@ header {
   border-color: var(--accent);
 }
 
+/* ==========================================================================
+   5. GRILLE DU CATALOGUE & CARTES DE JEU
+   ========================================================================== */
 .section-title {
   font-size: 1.3rem;
   font-weight: 700;
@@ -292,31 +363,4 @@ header {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* Bouton Arcade Web stylé dans le header */
-.nav-arcade-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.nav-arcade-btn:hover {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-}
-
-.nav-arcade-btn:active {
-  transform: translateY(0);
 }
