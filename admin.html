@@ -113,13 +113,28 @@
     // Vérification de la session à l'ouverture de la page
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
+      
       if (!session) {
-        // Rediriger vers le login si non connecté
         window.location.href = 'login.html';
-      } else {
-        loadAdminGames();
-        loadAdminWebLinks();
+        return;
       }
+    
+      // Vérification des droits d'administration
+      const { data: profile, error } = await supabaseClient
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', session.user.id)
+        .single();
+    
+      if (error || !profile?.is_admin) {
+        alert("Accès refusé : vous n'avez pas les droits d'administration.");
+        window.location.href = 'index.html';
+        return;
+      }
+    
+      // Si OK, chargement des données
+      loadAdminGames();
+      loadAdminWebLinks();
     }
 
     // Gestion de la déconnexion
