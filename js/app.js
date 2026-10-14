@@ -15,7 +15,7 @@ async function initApp() {
   // Mettre à jour l'UI du Header (Connexion / Profil / Déconnexion)
   mettreAJourHeaderAuth();
 
-  // 2. Charger les favoris depuis Supabase si connecté, sinon depuis le localStorage
+  // 2. Charger les favoris depuis Supabase si connecté
   await chargerFavoris();
 
   // 3. Charger le catalogue des jeux
@@ -49,18 +49,18 @@ async function mettreAJourHeaderAuth() {
     }
 
     authNav.innerHTML = `
-      ${estAdmin ? '<a href="admin.html" style="background: #f59e0b; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">🛠️ Admin</a>' : ''}
-      <span style="font-size: 0.85rem; color: #94a3b8; display: none; @media(min-width: 768px){display:inline;}">${currentUser.email}</span>
-      <button id="btn-logout-header" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Déconnexion</button>
+      ${estAdmin ? '<a href="admin.html" style="background: #ef4444; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">🛠️ Admin</a>' : ''}
+      <span style="font-size: 0.85rem; color: #94a3b8; display: none; @media(min-width: 768px){display:inline;}">👤 ${currentUser.email.split('@')[0]}</span>
+      <button id="btn-logout-header" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Déconnexion</button>
     `;
-    document.getElementById('btn-logout-header').addEventListener('click', async () => {
+    document.getElementById('btn-logout-header')?.addEventListener('click', async () => {
       await supabaseClient.auth.signOut();
       window.location.reload();
     });
   } else {
     authNav.innerHTML = `
       <a href="login.html" style="color: white; text-decoration: none; font-size: 0.9rem;">Connexion</a>
-      <a href="register.html" style="background: #3b82f6; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.9rem; font-weight: bold;">S'inscrire</a>
+      <a href="register.html" style="background: var(--accent, #6366f1); color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.9rem; font-weight: bold;">S'inscrire</a>
     `;
   }
 }
@@ -78,8 +78,7 @@ async function chargerFavoris() {
       userFavorisIds = data.map(f => String(f.game_id));
     }
   } else {
-    // Mode invité : LocalStorage
-    userFavorisIds = JSON.parse(localStorage.getItem('retroplay_favs') || '[]');
+    userFavorisIds = [];
   }
 }
 
@@ -115,10 +114,19 @@ async function initCatalogue() {
     }
 
     filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
+        const cibleConsole = btn.dataset.console;
+
+        // VERIFICATION INVITE : Si clic sur "Mes Favoris" sans être connecté
+        if (cibleConsole === 'favorites' && !currentUser) {
+          alert("Connecte-toi pour accéder à tes favoris !");
+          window.location.href = 'login.html';
+          return;
+        }
+
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        consoleFiltre = btn.dataset.console;
+        consoleFiltre = cibleConsole;
         const query = searchInput ? searchInput.value : '';
         filtrerJeux(query, consoleFiltre);
       });
@@ -202,6 +210,8 @@ function creerCarteJeu(jeu, estFavori) {
     e.stopPropagation();
     
     const isNowFav = await toggleFavori(jeu.id);
+    if (isNowFav === null) return; // Annulé car non connecté
+
     favBtn.classList.toggle('active', isNowFav);
     favBtn.textContent = isNowFav ? '❤️' : '🤍';
 
@@ -236,45 +246,41 @@ function filtrerJeux(recherche, consoleCode) {
   afficherJeux(resultats);
 }
 
-// --- Logique Synchro Favoris (Supabase ou LocalStorage) ---
+// --- Logique Synchro Favoris (Supabase) ---
 async function toggleFavori(gameId) {
+  // 1. VERIFICATION INVITE : Redirection vers login si non connecté
+  if (!currentUser) {
+    alert("Connecte-toi pour ajouter ce jeu à tes favoris !");
+    window.location.href = 'login.html';
+    return null;
+  }
+  
   const index = userFavorisIds.indexOf(gameId);
   const isCurrentlyFav = index > -1;
 
-  if (currentUser) {
-    // Utilisateur connecté : Sauvegarde dans Supabase
-    if (isCurrentlyFav) {
-      // Supprimer
-      const { error } = await supabaseClient
-        .from('favorites')
-        .delete()
-        .eq('user_id', currentUser.id)
-        .eq('game_id', gameId);
+  if (isCurrentlyFav) {
+    // Supprimer le favori
+    const { error } = await supabaseClient
+      .from('favorites')
+      .delete()
+      .eq('user_id', currentUser.id)
+      .eq('game_id', gameId);
 
-      if (!error) {
-        userFavorisIds.splice(index, 1);
-        return false;
-      }
-    } else {
-      // Ajouter
-      const { error } = await supabaseClient
-        .from('favorites')
-        .insert([{ user_id: currentUser.id, game_id: gameId }]);
-
-      if (!error) {
-        userFavorisIds.push(gameId);
-        return true;
-      }
-    }
-    return isCurrentlyFav; // Retourne l'état précédent en cas d'erreur
-  } else {
-    // Mode invité : LocalStorage
-    if (isCurrentlyFav) {
+    if (!error) {
       userFavorisIds.splice(index, 1);
-    } else {
-      userFavorisIds.push(gameId);
+      return false;
     }
-    localStorage.setItem('retroplay_favs', JSON.stringify(userFavorisIds));
-    return !isCurrentlyFav;
+  } else {
+    // Ajouter le favori
+    const { error } = await supabaseClient
+      .from('favorites')
+      .insert([{ user_id: currentUser.id, game_id: gameId }]);
+
+    if (!error) {
+      userFavorisIds.push(gameId);
+      return true;
+    }
   }
+
+  return isCurrentlyFav; // En cas d'erreur réseau
 }
