@@ -7,6 +7,13 @@ let consoleFiltre = 'all';
 let currentUser = null;
 let userFavorisIds = []; // Stocke les IDs des favoris de l'utilisateur connecté
 
+const IMAGE_DEFAUT = 'data:image/svg+xml,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="400">' +
+  '<rect width="100%" height="100%" fill="#181a20"/>' +
+  '<text x="50%" y="50%" fill="#9ca3af" font-family="sans-serif" font-size="20" text-anchor="middle">Pas de visuel</text>' +
+  '</svg>'
+);
+
 async function initApp() {
   // 1. Vérifier si un utilisateur est connecté
   const { data: { session } } = await supabaseClient.auth.getSession();
@@ -98,7 +105,7 @@ function afficherHeroBanner(jeu) {
   const heroContainer = document.getElementById('hero-section');
   if (!heroContainer) return;
 
-  const coverUrl = jeu.cover || 'https://via.placeholder.com/800x400';
+  const coverUrl = jeu.cover || IMAGE_DEFAUT;
 
   heroContainer.innerHTML = `
   <div class="hero-card">
@@ -139,7 +146,7 @@ function creerCarteJeu(jeu, estFavori) {
   const card = document.createElement('div');
   card.className = 'game-card';
 
-  const coverUrl = jeu.cover || 'https://via.placeholder.com/300x400?text=Pas+de+visuel';
+  const coverUrl = jeu.cover || IMAGE_DEFAUT;
   const desc = jeu.description || 'Cliquez pour jouer à ce classique !';
 
   card.innerHTML = `
