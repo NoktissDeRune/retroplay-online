@@ -153,7 +153,7 @@ function afficherHeroBanner(jeu) {
         <span class="hero-tag">🔥 À la une — ${jeu.console.toUpperCase()}</span>
         <h1 class="hero-title">${jeu.title}</h1>
         <p class="hero-desc">${jeu.description || ''}</p>
-        <a href="play.html?game=${jeu.id}" class="btn-play-hero">▶ Jouer maintenant</a>
+        <a href="play.html?id=${jeu.id}" class="btn-play-hero">▶ Jouer maintenant</a>
       </div>
     </div>
   `;
@@ -192,8 +192,7 @@ function creerCarteJeu(jeu, estFavori) {
     <button class="fav-btn ${estFavori ? 'active' : ''}" title="Ajouter aux favoris">
       ${estFavori ? '❤️' : '🤍'}
     </button>
-    <a href="play.html?game=${jeu.id}" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; height:100%;">
-      <div class="cover-wrapper">
+    <a href="play.html?id=${jeu.id}" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; height:100%;">      <div class="cover-wrapper">
         <img class="cover-img" src="${coverUrl}" alt="${jeu.title}" loading="lazy">
         <span class="badge">${jeu.console.toUpperCase()}</span>
       </div>
