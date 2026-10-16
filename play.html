@@ -60,13 +60,19 @@
       document.getElementById('game-title').textContent = game.title;
       document.getElementById('game-description').textContent = game.description || "Aucune description disponible.";
 
+      // Les consoles "gbc" et "gb" utilisent le même cœur
+      let core = game.console.toLowerCase();
+      if (core === 'gbc') core = 'gb';
+      
       window.EJS_player = "#game-container";
+      window.EJS_core = core;
       window.EJS_gameUrl = game.rom_url;
-      window.EJS_core = game.console;
-      window.EJS_pathtodata = "data/";
-
+      window.EJS_gameName = game.title;   // sépare les sauvegardes de chaque jeu
+      window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+      window.EJS_language = "fr";
+      
       const script = document.createElement('script');
-      script.src = "data/loader.js";
+      script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
       document.body.appendChild(script);
     }
 
