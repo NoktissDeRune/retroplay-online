@@ -162,9 +162,9 @@
       games.forEach(game => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${game.title}</td>
-          <td>${game.console.toUpperCase()}</td>
-          <td><button class="btn-delete" onclick="deleteGame('${game.id}')">Supprimer</button></td>
+          <td>${escapeHtml(link.title)}</td>
+          <td><a href="${escapeHtml(urlSure(link.url))}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6;">${escapeHtml(link.url)}</a></td>
+          <td><button class="btn-delete" onclick="deleteWebLink('${escapeHtml(link.id)}')">Supprimer</button></td>
         `;
         tbody.appendChild(tr);
       });
