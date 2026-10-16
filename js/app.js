@@ -19,36 +19,6 @@ async function initApp() {
   initCatalogue();
 }
 
-  if (currentUser) {
-    // Interroger la base de données pour savoir si l'utilisateur est admin
-    let estAdmin = false;
-    const { data: profile } = await supabaseClient
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', currentUser.id)
-      .single();
-
-    if (profile && profile.is_admin) {
-      estAdmin = true;
-    }
-
-    authNav.innerHTML = `
-      ${estAdmin ? '<a href="admin.html" style="background: #ef4444; color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">🛠️ Admin</a>' : ''}
-      <span style="font-size: 0.85rem; color: #94a3b8; display: none; @media(min-width: 768px){display:inline;}">👤 ${currentUser.email.split('@')[0]}</span>
-      <button id="btn-logout-header" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Déconnexion</button>
-    `;
-    document.getElementById('btn-logout-header')?.addEventListener('click', async () => {
-      await supabaseClient.auth.signOut();
-      window.location.reload();
-    });
-  } else {
-    authNav.innerHTML = `
-      <a href="login.html" style="color: white; text-decoration: none; font-size: 0.9rem;">Connexion</a>
-      <a href="register.html" style="background: var(--accent, #6366f1); color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.9rem; font-weight: bold;">S'inscrire</a>
-    `;
-  }
-}
-
 // --- Chargement des Favoris ---
 async function chargerFavoris() {
   if (currentUser) {
