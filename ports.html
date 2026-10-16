@@ -55,10 +55,10 @@
         card.className = 'web-card';
         card.innerHTML = `
           <div class="web-card-content">
-            <h3>${link.title}</h3>
-            <p>${link.description || 'Découvrir ce site de jeux en ligne.'}</p>
+            <h3>${escapeHtml(link.title)}</h3>
+            <p>${escapeHtml(link.description || 'Découvrir ce site de jeux en ligne.')}</p>
           </div>
-          <a href="${link.url}" target="_blank" class="btn-visit">
+          <a href="${escapeHtml(urlSure(link.url))}" target="_blank" rel="noopener noreferrer" class="btn-visit">
             <span>Visiter le site</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
           </a>
