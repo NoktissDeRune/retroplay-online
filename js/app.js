@@ -12,28 +12,12 @@ async function initApp() {
   const { data: { session } } = await supabaseClient.auth.getSession();
   currentUser = session ? session.user : null;
 
-  // Mettre à jour l'UI du Header (Connexion / Profil / Déconnexion)
-  mettreAJourHeaderAuth();
-
   // 2. Charger les favoris depuis Supabase si connecté
   await chargerFavoris();
 
   // 3. Charger le catalogue des jeux
   initCatalogue();
 }
-
-// --- Gestion de l'UI Header Auth ---
-async function mettreAJourHeaderAuth() {
-  const header = document.querySelector('header');
-  if (!header) return;
-
-  let authNav = document.getElementById('auth-nav');
-  if (!authNav) {
-    authNav = document.createElement('div');
-    authNav.id = 'auth-nav';
-    authNav.style.cssText = 'margin-left: auto; display: flex; gap: 1rem; align-items: center;';
-    header.appendChild(authNav);
-  }
 
   if (currentUser) {
     // Interroger la base de données pour savoir si l'utilisateur est admin
