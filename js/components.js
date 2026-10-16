@@ -1,3 +1,20 @@
+// --- Utilitaires de sécurité ---
+function escapeHtml(valeur) {
+  return String(valeur ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+// N'accepte que les liens https:// (bloque javascript:, data:, etc.)
+function urlSure(url) {
+  try {
+    const u = new URL(url);
+    return u.protocol === 'https:' ? u.href : '#';
+  } catch {
+    return '#';
+  }
+}
+
 // Fonction pour charger et mettre à jour le Header
 async function loadHeader() {
   const container = document.getElementById('header-container');
@@ -63,7 +80,7 @@ async function mettreAJourHeaderAuth() {
 
   // Affichage des infos de profil dans le header
   if (authContainer) {
-    const userEmail = session.user.email.split('@')[0]; // Extrait le nom avant le @
+    const userEmail = escapeHtml(session.user.email.split('@')[0]); // Extrait le nom avant le @
     authContainer.innerHTML = `
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span style="font-size: 0.85rem; color: var(--text-muted);">
