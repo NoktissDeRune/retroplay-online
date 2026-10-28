@@ -144,31 +144,37 @@
     });
 
     // Charger les jeux dans le tableau admin
-    async function loadAdminGames() {
-      const { data: games, error } = await supabaseClient
-        .from('games')
-        .select('*')
-        .order('created_at', { ascending: false });
+async function loadAdminGames() {
+  const tbody = document.querySelector('#admin-games-table tbody');
+  if (!tbody) return;
 
-      const tbody = document.querySelector('#admin-games-table tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
+  const { data: games, error } = await supabaseClient
+    .from('games')
+    .select('*')
+    .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Erreur chargement:', error);
-        return;
-      }
+  if (error) {
+    console.error('Erreur chargement:', error);
+    tbody.innerHTML = '<tr><td colspan="3" style="color:#ef4444;">Erreur de chargement : ' + escapeHtml(error.message) + '</td></tr>';
+    return;
+  }
 
-      games.forEach(game => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${escapeHtml(link.title)}</td>
-          <td><a href="${escapeHtml(urlSure(link.url))}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6;">${escapeHtml(link.url)}</a></td>
-          <td><button class="btn-delete" onclick="deleteWebLink('${escapeHtml(link.id)}')">Supprimer</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+  if (!games || games.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3">Aucun jeu dans le catalogue.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  games.forEach(game => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(game.title)}</td>
+      <td>${escapeHtml(String(game.console ?? '').toUpperCase())}</td>
+      <td><button class="btn-delete" onclick="deleteGame('${escapeHtml(game.id)}')">Supprimer</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
     // Ajouter un jeu
     document.getElementById('add-game-form').addEventListener('submit', async (e) => {
