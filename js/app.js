@@ -111,7 +111,7 @@ function afficherHeroBanner(jeu) {
   <div class="hero-card">
     <img class="hero-bg" src="${escapeHtml(coverUrl)}" alt="${escapeHtml(jeu.title)}">
     <div class="hero-content">
-      <span class="hero-tag">🔥 À la une — ${escapeHtml(jeu.console.toUpperCase())}</span>
+      <span class="hero-tag">🔥 À la une — ${escapeHtml(String(jeu.console ?? '').toUpperCase())}</span>
       <h1 class="hero-title">${escapeHtml(jeu.title)}</h1>
       <p class="hero-desc">${escapeHtml(jeu.description || '')}</p>
       <a href="play.html?id=${encodeURIComponent(jeu.id)}" class="btn-play-hero">▶ Jouer maintenant</a>
@@ -156,7 +156,7 @@ function creerCarteJeu(jeu, estFavori) {
     <a href="play.html?id=${encodeURIComponent(jeu.id)}" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; height:100%;">
       <div class="cover-wrapper">
         <img class="cover-img" src="${escapeHtml(coverUrl)}" alt="${escapeHtml(jeu.title)}" loading="lazy">
-        <span class="badge">${escapeHtml(jeu.console.toUpperCase())}</span>
+        <span class="badge">${escapeHtml(String(jeu.console ?? '').toUpperCase())}</span>
       </div>
       <div class="game-info">
         <div class="game-title">${escapeHtml(jeu.title)}</div>
@@ -198,7 +198,7 @@ function filtrerJeux(recherche, consoleCode) {
     } else if (consoleCode === 'favorites') {
       matchConsole = userFavorisIds.includes(jeu.id);
     } else {
-      matchConsole = (jeu.console.toLowerCase() === consoleCode.toLowerCase());
+      matchConsole = (String(jeu.console ?? '').toUpperCase() === consoleCode.toLowerCase());
     }
 
     return matchTitre && matchConsole;
