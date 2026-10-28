@@ -506,6 +506,55 @@ header, .main-header {
   line-height: 1.5;
 }
 
+.guide-panel {
+  width: 100%;
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.guide-panel h3 {
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+
+.guide-block {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.guide-block h4 {
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+
+.guide-block ul {
+  list-style: none;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.guide-block li {
+  margin-bottom: 0.5rem;
+}
+
+.guide-block code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
 /* ==========================================================================
    7. CARTES JEUX & PÉPITES WEB (PORTS.HTML)
    ========================================================================== */
