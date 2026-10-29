@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetroPlay — Ma propre ROM</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header injecté dynamiquement -->
+  <div id="header-container"></div>
+
+  <main>
+    <div class="play-container">
+
+      <!-- Étape 1 : choix du fichier -->
+      <section id="local-panel" class="local-panel">
+        <h1>Jouer avec ma propre ROM</h1>
+        <p class="local-intro">
+          Choisis un fichier de jeu sur ton appareil. Il reste chez toi :
+          rien n'est envoyé ni hébergé sur RetroPlay.
+        </p>
+
+        <form id="local-form" class="local-form" novalidate>
+          <div class="form-group">
+            <label for="rom-file">Fichier de jeu</label>
+            <input type="file" id="rom-file" class="admin-input">
+          </div>
+
+          <div class="form-group">
+            <label for="rom-console">Console</label>
+            <select id="rom-console" class="admin-input"></select>
+          </div>
+
+          <div id="local-error" class="local-error" role="alert"></div>
+          <button type="submit" class="btn-submit">▶ Lancer le jeu</button>
+        </form>
+
+        <div class="local-supported">
+          <h3>Consoles prises en charge</h3>
+          <ul id="supported-list"></ul>
+        </div>
+
+        <p class="local-note">
+          Utilise uniquement des jeux dont tu possèdes une copie légale ou des jeux libres de droits.
+        </p>
+      </section>
+
+      <!-- Étape 2 : l'émulateur (caché tant qu'aucun jeu n'est lancé) -->
+      <section id="local-game" class="local-game is-hidden">
+        <div class="local-game-bar">
+          <strong id="local-game-name"></strong>
+          <button type="button" id="btn-change-rom" class="btn-secondary">Changer de ROM</button>
+        </div>
+        <div id="game-container"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Supabase (nécessaire pour le header : session / admin) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/components.js"></script>
+
+  <!-- Logique de la page -->
+  <script src="js/local.js"></script>
+</body>
+</html>
