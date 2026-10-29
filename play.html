@@ -88,7 +88,7 @@
       document.getElementById('game-description').textContent = game.description || "Aucune description disponible.";
 
       // Les consoles "gbc" et "gb" utilisent le même cœur
-      let core = game.console.toLowerCase();
+      let core = String(game.console ?? '').toLowerCase();
       if (core === 'gbc') core = 'gb';
       
       window.EJS_player = "#game-container";
