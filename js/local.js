@@ -56,6 +56,12 @@ const CONSOLES = {
     label: 'Sega Game Gear',
     core: 'segaGG',
     extensions: ['gg']
+  },
+  nds: {
+    label: 'Nintendo DS',
+    core: 'nds',
+    extensions: ['nds'],
+    maxMo: 512
   }
 };
 
