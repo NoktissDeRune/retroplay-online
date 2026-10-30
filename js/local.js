@@ -141,8 +141,9 @@ function validerFichier(file, cleConsole) {
   }
 
   if (file.size === 0) return 'Ce fichier est vide.';
-  if (file.size > TAILLE_MAX_MO * 1024 * 1024) {
-    return 'Fichier trop volumineux (maximum ' + TAILLE_MAX_MO + ' Mo).';
+  const maxMo = CONSOLES[cleConsole].maxMo ?? TAILLE_MAX_MO;
+  if (file.size > maxMo * 1024 * 1024) {
+    return 'Fichier trop volumineux pour cette console (maximum ' + maxMo + ' Mo).';
   }
 
   if (!cleConsole) return 'Choisis la console correspondant à ce jeu.';
