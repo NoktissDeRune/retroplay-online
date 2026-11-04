@@ -46,7 +46,6 @@ async function chargerFavoris() {
 async function initCatalogue() {
   const grid = document.getElementById('games-grid');
   const searchInput = document.getElementById('search-input');
-  const filterBtns = document.querySelectorAll('.filter-btn');
 
   try {
     const { data: games, error } = await supabaseClient
@@ -66,6 +65,7 @@ async function initCatalogue() {
       afficherHeroBanner(tousLesJeux[0]);
     }
 
+    construireFiltres();
     afficherJeux(tousLesJeux);
 
     if (searchInput) {
@@ -74,31 +74,53 @@ async function initCatalogue() {
       });
     }
 
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const cibleConsole = btn.dataset.console;
-
-        // VERIFICATION INVITE : Si clic sur "Mes Favoris" sans être connecté
-        if (cibleConsole === 'favorites' && !currentUser) {
-          alert("Connecte-toi pour accéder à tes favoris !");
-          window.location.href = 'login.html';
-          return;
-        }
-
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        consoleFiltre = cibleConsole;
-        const query = searchInput ? searchInput.value : '';
-        filtrerJeux(query, consoleFiltre);
-      });
-    });
-
   } catch (erreur) {
     console.error('Erreur lors du chargement du catalogue Supabase:', erreur);
     if (grid) {
       grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Impossible de charger le catalogue depuis la base de données.</p>';
     }
   }
+}
+
+// Génère les pastilles : Tous, Favoris, puis une par console présente dans le catalogue
+function construireFiltres() {
+  const conteneur = document.getElementById('filters-container');
+  if (!conteneur) return;
+
+  const utilisees = new Set(tousLesJeux.map(j => trouverConsole(j.console)).filter(Boolean));
+  const filtres = [
+    { code: 'all', texte: 'Tous' },
+    { code: 'favorites', texte: '❤️ Mes favoris', classe: 'fav' },
+    ...Object.keys(CONSOLES)
+      .filter(cle => utilisees.has(cle))
+      .map(cle => ({ code: cle, texte: CONSOLES[cle].court }))
+  ];
+
+  conteneur.innerHTML = '';
+  filtres.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (f.classe ? ' ' + f.classe : '') + (f.code === consoleFiltre ? ' active' : '');
+    btn.dataset.console = f.code;
+    btn.textContent = f.texte;
+
+    btn.addEventListener('click', () => {
+      // Invité : "Mes favoris" demande une connexion
+      if (f.code === 'favorites' && !currentUser) {
+        alert("Connecte-toi pour accéder à tes favoris !");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      conteneur.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      consoleFiltre = f.code;
+
+      const searchInput = document.getElementById('search-input');
+      filtrerJeux(searchInput ? searchInput.value : '', consoleFiltre);
+    });
+
+    conteneur.appendChild(btn);
+  });
 }
 
 function afficherHeroBanner(jeu) {
@@ -198,7 +220,7 @@ function filtrerJeux(recherche, consoleCode) {
     } else if (consoleCode === 'favorites') {
       matchConsole = userFavorisIds.includes(jeu.id);
     } else {
-      matchConsole = (String(jeu.console ?? '').toUpperCase() === consoleCode.toLowerCase());
+      matchConsole = (trouverConsole(jeu.console) === consoleCode);
     }
 
     return matchTitre && matchConsole;
