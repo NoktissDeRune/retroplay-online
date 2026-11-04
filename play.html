@@ -89,9 +89,8 @@
       document.getElementById('game-title').textContent = game.title;
       document.getElementById('game-description').textContent = game.description || "Aucune description disponible.";
 
-      // Les consoles "gbc" et "gb" utilisent le même cœur
-      let core = String(game.console ?? '').toLowerCase();
-      if (core === 'gbc') core = 'gb';
+      const cleConsole = trouverConsole(game.console);
+      const core = cleConsole ? CONSOLES[cleConsole].core : String(game.console ?? '').toLowerCase();
       
       window.EJS_player = "#game-container";
       window.EJS_core = core;
