@@ -206,8 +206,6 @@ header, .main-header {
 }
 
 .search-input {
-  flex: 1;
-  min-width: 250px;
   padding: 0.8rem 1.2rem;
   background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -221,20 +219,49 @@ header, .main-header {
   border-color: var(--accent);
 }
 
+.search-input {
+  flex: 1 1 100%;
+}
+
+.filters {
+  flex: 1 1 100%;
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
 .filter-btn {
-  padding: 0.8rem 1.2rem;
+  flex-shrink: 0;
+  padding: 0.5rem 1.1rem;
   background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius);
+  border-radius: 999px;
   color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.filter-btn.active, .filter-btn:hover {
+.filter-btn:hover {
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.filter-btn.active {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+}
+
+.filter-btn.fav {
+  margin-right: 0.6rem;
 }
 
 .section-title {
