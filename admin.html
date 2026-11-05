@@ -27,18 +27,30 @@
         </div>
 
         <div class="form-group">
-          <label for="console">Console (ex: gba, gb, n64)</label>
-          <input type="text" id="console" class="admin-input" placeholder="gba" required>
+          <label for="console">Console</label>
+          <select id="console" class="admin-input" required></select>
         </div>
 
         <div class="form-group">
-          <label for="rom_url">URL de la ROM (.zip/.gba)</label>
-          <input type="text" id="rom_url" class="admin-input" placeholder="roms/<console>/<nom>" required>
+          <label for="rom_file">ROM : envoyer sur Supabase</label>
+          <input type="file" id="rom_file" class="admin-input">
+          <span class="form-hint">50 Mo maximum. Si un fichier est choisi ici, il est prioritaire sur le champ ci-dessous.</span>
         </div>
 
         <div class="form-group">
-          <label for="cover_url">URL de la jaquette (Image)</label>
-          <input type="text" id="cover_url" class="admin-input" placeholder="covers/" required>
+          <label for="rom_url">ou chemin / URL d'une ROM déjà hébergée (GitHub...)</label>
+          <input type="text" id="rom_url" class="admin-input" placeholder="roms/gba/mon-jeu.gba">
+        </div>
+
+        <div class="form-group">
+          <label for="cover_file">Jaquette : envoyer sur Supabase (image)</label>
+          <input type="file" id="cover_file" class="admin-input" accept="image/*">
+          <span class="form-hint">5 Mo maximum.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="cover_url">ou chemin / URL d'une jaquette déjà hébergée</label>
+          <input type="text" id="cover_url" class="admin-input" placeholder="covers/mon-jeu.jpg">
         </div>
 
         <div class="form-group">
@@ -46,6 +58,7 @@
           <textarea id="description" class="admin-textarea" placeholder="Description du jeu..."></textarea>
         </div>
 
+        <div id="admin-upload-status" class="form-hint" role="status"></div>
         <button type="submit" class="btn-submit">Publier le jeu</button>
       </form>
 
@@ -105,34 +118,42 @@
   <!-- Scripts Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
-  
+
   <!-- Script de gestion du Header dynamique -->
   <script src="js/components.js"></script>
 
+  <!-- Configuration partagée des consoles -->
+  <script src="js/consoles.js"></script>
+
   <script>
+    const BUCKET = 'game-files';
+    const MAX_ROM_MO = 50;
+    const MAX_COVER_MO = 5;
+
     // Vérification de la session à l'ouverture de la page
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      
+
       if (!session) {
         window.location.href = 'login.html';
         return;
       }
-    
+
       // Vérification des droits d'administration
       const { data: profile, error } = await supabaseClient
         .from('profiles')
         .select('is_admin')
         .eq('id', session.user.id)
         .single();
-    
+
       if (error || !profile?.is_admin) {
         alert("Accès refusé : vous n'avez pas les droits d'administration.");
         window.location.href = 'index.html';
         return;
       }
-    
+
       // Si OK, chargement des données
+      remplirListeConsoles();
       loadAdminGames();
       loadAdminWebLinks();
     }
@@ -143,67 +164,186 @@
       window.location.href = 'login.html';
     });
 
-    // Charger les jeux dans le tableau admin
-async function loadAdminGames() {
-  const tbody = document.querySelector('#admin-games-table tbody');
-  if (!tbody) return;
+    // --- Outils ---
+    function remplirListeConsoles() {
+      const select = document.getElementById('console');
+      select.innerHTML = '<option value="">— Choisir la console —</option>';
+      Object.entries(CONSOLES).forEach(([cle, c]) => {
+        const opt = document.createElement('option');
+        opt.value = cle;
+        opt.textContent = c.label;
+        select.appendChild(opt);
+      });
+    }
 
-  const { data: games, error } = await supabaseClient
-    .from('games')
-    .select('*')
-    .order('created_at', { ascending: false });
+    function extensionFichier(nom) {
+      const i = nom.lastIndexOf('.');
+      return i === -1 ? '' : nom.slice(i + 1).toLowerCase();
+    }
 
-  if (error) {
-    console.error('Erreur chargement:', error);
-    tbody.innerHTML = '<tr><td colspan="3" style="color:#ef4444;">Erreur de chargement : ' + escapeHtml(error.message) + '</td></tr>';
-    return;
-  }
+    // Nom de fichier sûr : sans accents, espaces ni caractères spéciaux
+    function nomSur(nom) {
+      const base = nom.replace(/\.[^.]+$/, '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9_-]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .toLowerCase();
+      return base || 'fichier';
+    }
 
-  if (!games || games.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3">Aucun jeu dans le catalogue.</td></tr>';
-    return;
-  }
+    // Envoie un fichier dans le bucket et renvoie son chemin et son URL publique
+    async function envoyerFichier(file, dossier) {
+      const chemin = dossier + '/' + nomSur(file.name) + '-' + Date.now() + '.' + extensionFichier(file.name);
 
-  tbody.innerHTML = '';
-  games.forEach(game => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${escapeHtml(game.title)}</td>
-      <td>${escapeHtml(String(game.console ?? '').toUpperCase())}</td>
-      <td><button class="btn-delete" onclick="deleteGame('${escapeHtml(game.id)}')">Supprimer</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+      const { error } = await supabaseClient.storage
+        .from(BUCKET)
+        .upload(chemin, file, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: file.type || 'application/octet-stream'
+        });
+      if (error) throw error;
 
-    // Ajouter un jeu
+      const { data } = supabaseClient.storage.from(BUCKET).getPublicUrl(chemin);
+      return { chemin: chemin, url: data.publicUrl };
+    }
+
+    // Retrouve le chemin dans le bucket à partir d'une URL publique (null si le fichier est ailleurs)
+    function cheminStorage(url) {
+      const marqueur = '/storage/v1/object/public/' + BUCKET + '/';
+      const texte = String(url ?? '');
+      const i = texte.indexOf(marqueur);
+      return i === -1 ? null : decodeURIComponent(texte.slice(i + marqueur.length));
+    }
+
+    // Vérifie le formulaire avant tout envoi
+    function validerFormulaireJeu(cleConsole, romFile, romUrl, coverFile) {
+      if (!cleConsole) return 'Choisis la console.';
+      if (!romFile && !romUrl) return 'Ajoute une ROM : un fichier à envoyer, ou un chemin / une URL.';
+
+      if (romFile) {
+        const ext = extensionFichier(romFile.name);
+        const autorisees = CONSOLES[cleConsole].extensions.concat(['zip']);
+        if (!autorisees.includes(ext)) {
+          return 'Ce fichier (.' + ext + ') ne correspond pas à la console « ' + CONSOLES[cleConsole].label + ' ».';
+        }
+        if (romFile.size > MAX_ROM_MO * 1024 * 1024) {
+          return 'ROM trop volumineuse pour Supabase (' + (romFile.size / 1048576).toFixed(1) + ' Mo, maximum ' + MAX_ROM_MO + ' Mo). Utilise le champ chemin / URL.';
+        }
+      }
+
+      if (coverFile) {
+        if (!coverFile.type.startsWith('image/')) return 'La jaquette doit être une image.';
+        if (coverFile.size > MAX_COVER_MO * 1024 * 1024) return 'Jaquette trop volumineuse (maximum ' + MAX_COVER_MO + ' Mo).';
+      }
+      return null;
+    }
+
+    // --- Jeux ---
+    async function loadAdminGames() {
+      const tbody = document.querySelector('#admin-games-table tbody');
+      if (!tbody) return;
+
+      const { data: games, error } = await supabaseClient
+        .from('games')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Erreur chargement:', error);
+        tbody.innerHTML = '<tr><td colspan="3" style="color:#ef4444;">Erreur de chargement : ' + escapeHtml(error.message) + '</td></tr>';
+        return;
+      }
+
+      if (!games || games.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">Aucun jeu dans le catalogue.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      games.forEach(game => {
+        const cle = trouverConsole(game.console);
+        const nomConsole = cle ? CONSOLES[cle].court : String(game.console ?? '').toUpperCase();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(game.title)}</td>
+          <td>${escapeHtml(nomConsole)}</td>
+          <td><button class="btn-delete" onclick="deleteGame('${escapeHtml(game.id)}')">Supprimer</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Ajouter un jeu (avec envoi éventuel des fichiers vers Supabase Storage)
     document.getElementById('add-game-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const newGame = {
-        title: document.getElementById('title').value,
-        console: document.getElementById('console').value.toLowerCase(),
-        rom_url: document.getElementById('rom_url').value,
-        cover_url: document.getElementById('cover_url').value,
-        description: document.getElementById('description').value,
-      };
+      const bouton = e.target.querySelector('button[type="submit"]');
+      const statut = document.getElementById('admin-upload-status');
+      const cleConsole = document.getElementById('console').value;
+      const romFile = document.getElementById('rom_file').files[0];
+      const coverFile = document.getElementById('cover_file').files[0];
+      let romUrl = document.getElementById('rom_url').value.trim();
+      let coverUrl = document.getElementById('cover_url').value.trim();
 
-      const { error } = await supabaseClient
-        .from('games')
-        .insert([newGame]);
+      const erreurForm = validerFormulaireJeu(cleConsole, romFile, romUrl, coverFile);
+      if (erreurForm) {
+        alert(erreurForm);
+        return;
+      }
 
-      if (error) {
-        alert('Erreur lors de l\'ajout : ' + error.message);
-      } else {
+      bouton.disabled = true;
+      const fichiersEnvoyes = []; // pour nettoyer en cas d'échec
+
+      try {
+        if (romFile) {
+          statut.textContent = 'Envoi de la ROM en cours...';
+          const r = await envoyerFichier(romFile, 'roms/' + cleConsole);
+          romUrl = r.url;
+          fichiersEnvoyes.push(r.chemin);
+        }
+        if (coverFile) {
+          statut.textContent = 'Envoi de la jaquette en cours...';
+          const c = await envoyerFichier(coverFile, 'covers');
+          coverUrl = c.url;
+          fichiersEnvoyes.push(c.chemin);
+        }
+
+        statut.textContent = 'Enregistrement du jeu...';
+        const { error } = await supabaseClient.from('games').insert([{
+          title: document.getElementById('title').value,
+          console: cleConsole,
+          rom_url: romUrl,
+          cover_url: coverUrl || null,
+          description: document.getElementById('description').value
+        }]);
+        if (error) throw error;
+
         alert('Jeu ajouté avec succès !');
         document.getElementById('add-game-form').reset();
         loadAdminGames();
+      } catch (err) {
+        console.error('Erreur ajout jeu:', err);
+        // On retire les fichiers déjà envoyés pour ne pas laisser d'orphelins
+        if (fichiersEnvoyes.length > 0) {
+          await supabaseClient.storage.from(BUCKET).remove(fichiersEnvoyes);
+        }
+        alert('Erreur lors de l\'ajout : ' + (err.message || err));
+      } finally {
+        bouton.disabled = false;
+        statut.textContent = '';
       }
     });
 
-    // Supprimer un jeu
+    // Supprimer un jeu (et ses fichiers s'ils sont dans Supabase Storage)
     async function deleteGame(id) {
       if (!confirm('Voulez-vous vraiment supprimer ce jeu ?')) return;
+
+      const { data: jeu } = await supabaseClient
+        .from('games')
+        .select('rom_url, cover_url')
+        .eq('id', id)
+        .single();
 
       const { error } = await supabaseClient
         .from('games')
@@ -212,9 +352,16 @@ async function loadAdminGames() {
 
       if (error) {
         alert('Erreur lors de la suppression : ' + error.message);
-      } else {
-        loadAdminGames();
+        return;
       }
+
+      const chemins = [jeu?.rom_url, jeu?.cover_url].map(cheminStorage).filter(Boolean);
+      if (chemins.length > 0) {
+        const { error: errFichiers } = await supabaseClient.storage.from(BUCKET).remove(chemins);
+        if (errFichiers) console.warn('Fichiers non supprimés du stockage:', errFichiers);
+      }
+
+      loadAdminGames();
     }
 
     // --- Gestion des liens Web dans l'Admin ---
@@ -236,9 +383,9 @@ async function loadAdminGames() {
       links.forEach(link => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${link.title}</td>
-          <td><a href="${link.url}" target="_blank" style="color: #3b82f6;">${link.url}</a></td>
-          <td><button class="btn-delete" onclick="deleteWebLink('${link.id}')">Supprimer</button></td>
+          <td>${escapeHtml(link.title)}</td>
+          <td><a href="${escapeHtml(urlSure(link.url))}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6;">${escapeHtml(link.url)}</a></td>
+          <td><button class="btn-delete" onclick="deleteWebLink('${escapeHtml(link.id)}')">Supprimer</button></td>
         `;
         tbody.appendChild(tr);
       });
