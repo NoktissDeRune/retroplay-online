@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetroPlay — Mon profil</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header injecté dynamiquement -->
+  <div id="header-container"></div>
+
+  <main>
+    <div class="profile-container">
+
+      <!-- En-tête du profil -->
+      <div class="profile-header">
+        <div id="profile-avatar" class="profile-avatar">?</div>
+        <div>
+          <h1 id="profile-name">Chargement...</h1>
+          <p id="profile-email"></p>
+        </div>
+      </div>
+
+      <!-- Statistiques -->
+      <div class="profile-stats">
+        <div class="stat"><strong id="stat-games">0</strong><span>jeux essayés</span></div>
+        <div class="stat"><strong id="stat-plays">0</strong><span>parties lancées</span></div>
+        <div class="stat"><strong id="stat-favs">0</strong><span>favoris</span></div>
+      </div>
+
+      <!-- Continuer à jouer -->
+      <section class="profile-section">
+        <h2 class="section-title">Continuer à jouer</h2>
+        <div id="history-grid" class="games-grid"></div>
+      </section>
+
+      <!-- Favoris -->
+      <section class="profile-section">
+        <h2 class="section-title">Mes favoris</h2>
+        <div id="favorites-grid" class="games-grid"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Scripts Supabase & Configuration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/consoles.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
