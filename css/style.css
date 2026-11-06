@@ -756,3 +756,79 @@ header, .main-header {
   background: var(--bg-hover);
   border-color: var(--accent);
 }
+
+/* ==========================================================================
+   8. PAGE PROFIL
+   ========================================================================== */
+.profile-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.profile-header h1 {
+  font-size: 1.6rem;
+}
+
+.profile-header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.stat {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  min-width: 140px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 1.6rem;
+}
+
+.stat span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.profile-section {
+  margin-bottom: 2.5rem;
+}
+
+.profile-section .games-grid {
+  padding: 0;
+}
+
+.profile-empty {
+  color: var(--text-muted);
+  grid-column: 1 / -1;
+}
