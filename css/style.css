@@ -384,6 +384,29 @@ header, .main-header {
   overflow: hidden;
 }
 
+.rows-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.row-block {
+  margin-bottom: 1.5rem;
+}
+
+.row-scroller {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding: 0.5rem 0 1rem;
+  scroll-snap-type: x proximity;
+}
+
+.row-scroller .game-card {
+  flex: 0 0 180px;
+  scroll-snap-align: start;
+}
+
 /* ==========================================================================
    5. FORMULAIRES & INTERFACES (Login, Register, Admin, Web Games)
    ========================================================================== */
