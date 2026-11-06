@@ -84,7 +84,7 @@ async function mettreAJourHeaderAuth() {
     authContainer.innerHTML = `
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span style="font-size: 0.85rem; color: var(--text-muted);">
-          👤 <strong style="color: #fff;">${userEmail}</strong> ${isAdmin ? '<span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 4px;">ADMIN</span>' : ''}
+          <a href="profile.html" style="color: inherit; text-decoration: none;">👤 <strong style="color: #fff;">${userEmail}</strong></a> ${isAdmin ? ...
         </span>
         <button id="header-logout-btn" class="nav-link" style="background: none; border: none; cursor: pointer;">Déconnexion</button>
       </div>
