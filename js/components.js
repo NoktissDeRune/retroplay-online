@@ -89,6 +89,7 @@ async function mettreAJourHeaderAuth() {
         <button id="header-logout-btn" class="nav-link" style="background: none; border: none; cursor: pointer;">Déconnexion</button>
       </div>
     `;
+    
 
     // Écouteur pour la déconnexion
     document.getElementById('header-logout-btn')?.addEventListener('click', async () => {
