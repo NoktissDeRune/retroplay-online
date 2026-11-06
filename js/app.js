@@ -67,7 +67,8 @@ async function initCatalogue() {
 
     construireFiltres();
     afficherJeux(tousLesJeux);
-
+    construireRangees();
+    
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         filtrerJeux(e.target.value, consoleFiltre);
@@ -225,6 +226,9 @@ function filtrerJeux(recherche, consoleCode) {
 
     return matchTitre && matchConsole;
   });
+
+  const rangees = document.getElementById('rows-section');
+  if (rangees) rangees.classList.toggle('is-hidden', terme !== '' || consoleCode !== 'all');
 
   afficherJeux(resultats);
 }
