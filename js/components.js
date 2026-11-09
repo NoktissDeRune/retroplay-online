@@ -99,6 +99,16 @@ async function mettreAJourHeaderAuth() {
   }
 }
 
+// Pied de page commun à toutes les pages
+function ajouterFooter() {
+  if (document.querySelector('.site-footer')) return;
+  const footer = document.createElement('footer');
+  footer.className = 'site-footer';
+  footer.innerHTML = '<a href="legal.html">Mentions légales et confidentialité</a>';
+  document.body.appendChild(footer);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadHeader();
+  ajouterFooter();
 });
