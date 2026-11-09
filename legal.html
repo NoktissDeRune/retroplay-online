@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetroPlay — Mentions légales et confidentialité</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header injecté dynamiquement -->
+  <div id="header-container"></div>
+
+  <main>
+    <article class="legal-container">
+      <h1>Mentions légales et confidentialité</h1>
+      <p class="legal-update">Dernière mise à jour : [À COMPLÉTER : date]</p>
+
+      <h2>Éditeur du site</h2>
+      <p>
+        RetroPlay est un site personnel et non commercial.
+      </p>
+      
+      <p>
+        La page « Ma ROM » permet de lancer un fichier de jeu choisi sur ton propre appareil. Ce fichier est lu
+        localement dans ton navigateur : il n'est ni envoyé, ni stocké, ni hébergé par RetroPlay.
+        Tu es responsable de n'utiliser que des jeux dont tu possèdes une copie légale ou que tu as le droit d'utiliser.
+      </p>
+
+      <h2>Données personnelles</h2>
+      <h3>Données collectées</h3>
+      <p>Uniquement si tu crées un compte :</p>
+      <ul>
+        <li>ton adresse email ;</li>
+        <li>ton mot de passe, conservé uniquement sous forme chiffrée (il n'est jamais lisible, ni par l'éditeur ni par le site) ;</li>
+        <li>tes jeux favoris ;</li>
+        <li>ton historique de jeu : quels jeux tu as lancés, combien de fois et à quelle date.</li>
+      </ul>
+      <p>Naviguer sur le site et utiliser la page « Ma ROM » ne nécessite aucun compte.</p>
+
+      <h3>Pourquoi ces données ?</h3>
+      <p>
+        Pour gérer ton compte, afficher tes favoris et ta page profil, te proposer de reprendre tes derniers jeux,
+        et établir des statistiques anonymes de popularité (par exemple la rubrique « Tendances », qui ne contient
+        que des totaux et jamais le nom des joueurs). La base légale est l'exécution du service que tu demandes
+        en créant ton compte.
+      </p>
+
+      <h3>Durée de conservation</h3>
+      <p>
+        Tes données sont conservées tant que ton compte existe. Sur simple demande, ton compte et toutes les données
+        associées (favoris, historique) sont supprimés.
+      </p>
+
+      <h3>Qui y a accès ?</h3>
+      <p>
+        L'éditeur, et les prestataires techniques nécessaires au fonctionnement du site.
+      </p>
+
+      <h2>5. Cookies et stockage local</h2>
+      <p>
+        RetroPlay n'utilise ni cookie publicitaire, ni outil de mesure d'audience. Le site utilise uniquement le stockage
+        local de ton navigateur pour des raisons techniques nécessaires.
+      </p>
+    </article>
+  </main>
+
+  <!-- Scripts Supabase (nécessaire pour le header : session / admin) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/components.js"></script>
+</body>
+</html>

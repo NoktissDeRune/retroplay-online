@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetroPlay — Mot de passe oublié</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header injecté dynamiquement -->
+  <div id="header-container"></div>
+
+  <main>
+    <div class="login-container">
+      <h2 style="margin-bottom: 0.75rem; text-align: center; color: white;">Mot de passe oublié</h2>
+      <p style="margin-bottom: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+        Indique l'adresse de ton compte, tu recevras un lien pour choisir un nouveau mot de passe.
+      </p>
+
+      <form id="forgot-form" class="login-form">
+        <input type="email" id="email" class="login-input" placeholder="Ton email" required>
+        <button type="submit" class="login-btn">Envoyer le lien</button>
+        <div id="error-msg"></div>
+      </form>
+
+      <div class="auth-link">
+        <a href="login.html">← Retour à la connexion</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/components.js"></script>
+
+  <script>
+    document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('error-msg');
+      const bouton = e.target.querySelector('button');
+
+      msg.style.color = '';
+      msg.textContent = 'Envoi en cours...';
+      bouton.disabled = true;
+
+      // Le lien du mail ramènera sur reset.html, au même endroit que cette page
+      const redirectTo = new URL('reset.html', window.location.href).href;
+
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectTo });
+      bouton.disabled = false;
+
+      if (error) {
+        msg.textContent = 'Erreur : ' + error.message;
+        return;
+      }
+
+      // Même message que l'adresse existe ou non : on ne révèle pas quels comptes existent
+      msg.style.color = '#22c55e';
+      msg.textContent = 'Si un compte existe avec cette adresse, un mail vient d\'être envoyé. Pense à vérifier tes spams.';
+    });
+  </script>
+</body>
+</html>
