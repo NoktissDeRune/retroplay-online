@@ -62,7 +62,7 @@ async function initCatalogue() {
     }));
 
     if (tousLesJeux.length > 0) {
-      afficherHeroBanner(tousLesJeux[0]);
+      choisirJeuALaUne().then(afficherHeroBanner);
     }
 
     construireFiltres();
