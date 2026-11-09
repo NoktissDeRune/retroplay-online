@@ -25,6 +25,8 @@ async function initProfil() {
   document.getElementById('profile-avatar').textContent = pseudo.charAt(0).toUpperCase();
   document.title = pseudo + ' — RetroPlay';
 
+  configurerSuppressionCompte();
+  
   await Promise.all([
     chargerHistorique(user.id),
     chargerFavorisProfil(user.id)
@@ -116,4 +118,30 @@ function creerCarte(jeu, sousTitre) {
     </div>
   `;
   return carte;
+}
+
+// --- Suppression du compte (confirmation par saisie) ---
+function configurerSuppressionCompte() {
+  const bouton = document.getElementById('btn-delete-account');
+  const msg = document.getElementById('delete-msg');
+  if (!bouton) return;
+
+  bouton.addEventListener('click', async () => {
+    const saisie = prompt('Cette action est définitive.\nTape SUPPRIMER pour confirmer :');
+    if (saisie !== 'SUPPRIMER') return;
+
+    bouton.disabled = true;
+    msg.textContent = 'Suppression en cours...';
+
+    const { error } = await supabaseClient.rpc('delete_my_account');
+    if (error) {
+      bouton.disabled = false;
+      msg.textContent = 'Erreur : ' + error.message;
+      return;
+    }
+
+    await supabaseClient.auth.signOut({ scope: 'local' });
+    alert('Ton compte a été supprimé.');
+    window.location.href = 'index.html';
+  });
 }
