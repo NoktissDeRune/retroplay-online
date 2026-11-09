@@ -72,3 +72,22 @@ function creerRangee(titre, jeux) {
   bloc.appendChild(defilement);
   return bloc;
 }
+
+// Jeu à la une : choisi dans l'admin, sinon le plus tendance, sinon le dernier ajouté
+async function choisirJeuALaUne() {
+  const choisi = tousLesJeux.find(j => j.featured === true);
+  if (choisi) return choisi;
+
+  try {
+    const { data } = await supabaseClient.rpc('trending_games', { p_limit: 1 });
+    if (data && data.length > 0) {
+      const tendance = tousLesJeux.find(j => j.id === String(data[0].game_id));
+      if (tendance) return tendance;
+    }
+  } catch (erreur) {
+    console.error('Erreur jeu à la une:', erreur);
+  }
+
+  return tousLesJeux[0];
+}
+
