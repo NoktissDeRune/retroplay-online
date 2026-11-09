@@ -268,7 +268,10 @@
         tr.innerHTML = `
           <td>${escapeHtml(game.title)}</td>
           <td>${escapeHtml(nomConsole)}</td>
-          <td><button class="btn-delete" onclick="deleteGame('${escapeHtml(game.id)}')">Supprimer</button></td>
+          <td>
+            <button class="btn-secondary" onclick="toggleFeatured('${escapeHtml(game.id)}', ${game.featured === true})">${game.featured ? '⭐ Retirer de la une' : '☆ Mettre à la une'}</button>
+            <button class="btn-delete" onclick="deleteGame('${escapeHtml(game.id)}')">Supprimer</button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
@@ -426,6 +429,32 @@
       } else {
         loadAdminWebLinks();
       }
+    }
+
+    // Un seul jeu à la une à la fois
+    async function toggleFeatured(id, dejaALaUne) {
+      if (!dejaALaUne) {
+        // On retire d'abord l'ancien jeu à la une
+        const { error: errRetrait } = await supabaseClient
+          .from('games')
+          .update({ featured: false })
+          .eq('featured', true);
+        if (errRetrait) {
+          alert('Erreur : ' + errRetrait.message);
+          return;
+        }
+      }
+
+      const { error } = await supabaseClient
+        .from('games')
+        .update({ featured: !dejaALaUne })
+        .eq('id', id);
+
+      if (error) {
+        alert('Erreur : ' + error.message);
+        return;
+      }
+      loadAdminGames();
     }
 
     // Lancer la vérification au chargement
