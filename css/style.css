@@ -521,6 +521,14 @@ header, .main-header {
   min-height: 1rem;
 }
 
+.auth-note {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text-muted);
+}
+
 /* ==========================================================================
    6. PAGE DE JEU (PLAY.HTML)
    ========================================================================== */
